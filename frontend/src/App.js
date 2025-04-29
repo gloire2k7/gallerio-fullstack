@@ -11,8 +11,10 @@ import Footer from './components/layout/Footer';
 // Public Pages
 import Home from './pages/Home';
 import Gallery from './pages/Gallery';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Artists from './pages/Artists';
+import About from './pages/About';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
 import ArtworkDetail from './pages/ArtworkDetail';
 
 // Protected Pages
@@ -54,6 +56,8 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/artists" element={<Artists />} />
+          <Route path="/about" element={<About />} />
           <Route path="/artwork/:id" element={<ArtworkDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

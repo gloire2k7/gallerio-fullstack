@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { loginUser } from '../../services/api';
-import { loginStart, loginSuccess, loginFailure } from '../../store/slices/authSlice';
+import { login } from '../../store/slices/authSlice';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,12 +17,11 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    dispatch(loginStart());
 
     try {
-      const response = await loginUser(formData);
-      localStorage.setItem('token', response.token);
-      dispatch(loginSuccess(response));
+      const resultAction = await dispatch(login(formData));
+      if (login.fulfilled.match(resultAction)) {
+        const response = resultAction.payload;
       
       // Check user role and navigate accordingly
       if (response.user.role === 'ARTIST') {
@@ -32,11 +30,12 @@ const Login = () => {
         navigate('/collector/home');
       } else {
         navigate('/');
+        }
+      } else {
+        setError(resultAction.payload?.message || 'Login failed. Please try again.');
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please try again.';
-      setError(errorMessage);
-      dispatch(loginFailure(errorMessage));
+      setError(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }

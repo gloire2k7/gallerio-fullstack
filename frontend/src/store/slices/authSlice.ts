@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { AuthState, LoginRequest, RegisterRequest, AuthResponse } from '../../types/auth';
 
-const API_URL = 'http://localhost:8080/api/auth';
+const API_URL = 'http://localhost:5000/api/auth';
 
 // Async thunks
-export const login = createAsyncThunk(
+export const login = createAsyncThunk<AuthResponse, LoginRequest>(
     'auth/login',
     async (credentials, { rejectWithValue }) => {
         try {
@@ -18,15 +19,11 @@ export const login = createAsyncThunk(
     }
 );
 
-export const register = createAsyncThunk(
+export const register = createAsyncThunk<AuthResponse, RegisterRequest>(
     'auth/register',
     async (userData, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${API_URL}/register`, userData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            const response = await axios.post(`${API_URL}/register`, userData);
             const { token, user } = response.data;
             localStorage.setItem('token', token);
             return response.data;
@@ -36,7 +33,7 @@ export const register = createAsyncThunk(
     }
 );
 
-const initialState = {
+const initialState: AuthState = {
     user: null,
     token: localStorage.getItem('token'),
     isAuthenticated: false,
@@ -75,7 +72,7 @@ const authSlice = createSlice({
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = action.payload as string;
             })
             // Register
             .addCase(register.pending, (state) => {
@@ -90,7 +87,7 @@ const authSlice = createSlice({
             })
             .addCase(register.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = action.payload as string;
             });
     }
 });
@@ -98,10 +95,10 @@ const authSlice = createSlice({
 export const { logout, clearError } = authSlice.actions;
 
 // Selectors
-export const selectAuth = (state) => state.auth;
-export const selectUser = (state) => state.auth.user;
-export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
-export const selectAuthLoading = (state) => state.auth.loading;
-export const selectAuthError = (state) => state.auth.error;
+export const selectAuth = (state: { auth: AuthState }) => state.auth;
+export const selectUser = (state: { auth: AuthState }) => state.auth.user;
+export const selectIsAuthenticated = (state: { auth: AuthState }) => state.auth.isAuthenticated;
+export const selectAuthLoading = (state: { auth: AuthState }) => state.auth.loading;
+export const selectAuthError = (state: { auth: AuthState }) => state.auth.error;
 
 export default authSlice.reducer; 

@@ -3,7 +3,7 @@ import authReducer from './slices/authSlice';
 import artworkReducer from './slices/artworkSlice';
 import messageReducer from './slices/messageSlice';
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     auth: authReducer,
     artwork: artworkReducer,
