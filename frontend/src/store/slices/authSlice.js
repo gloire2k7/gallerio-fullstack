@@ -1,42 +1,86 @@
-import { createSlice } from '@reduxjs/toolkit';
-import jwt_decode from 'jwt-decode';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+
+const API_URL = 'http://localhost:8080/api';
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, credentials);
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const register = createAsyncThunk(
+  'auth/register',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/register`, userData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const initialState = {
-  isAuthenticated: false,
   user: null,
-  token: null,
+  token: localStorage.getItem('token'),
+  isAuthenticated: false,
   loading: false,
-  error: null
+  error: null,
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginStart: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    loginSuccess: (state, action) => {
-      state.isAuthenticated = true;
-      state.token = action.payload.token;
-      state.user = jwt_decode(action.payload.token);
-      state.loading = false;
-      state.error = null;
-    },
-    loginFailure: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
     logout: (state) => {
-      state.isAuthenticated = false;
+      localStorage.removeItem('token');
       state.user = null;
       state.token = null;
-      state.loading = false;
+      state.isAuthenticated = false;
+    },
+    clearError: (state) => {
       state.error = null;
-    }
-  }
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.token = action.payload.token;
+        state.user = jwtDecode(action.payload.token);
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || 'Login failed';
+      })
+      .addCase(register.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(register.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || 'Registration failed';
+      });
+  },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { logout, clearError } = authSlice.actions;
 export default authSlice.reducer; 
