@@ -16,9 +16,8 @@ import {
 import {
   Menu as MenuIcon,
   AccountCircle,
-  ArtTrack,
-  ShoppingCart,
-  Chat,
+  Palette,
+  Home,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
@@ -47,7 +46,13 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar 
+      position="static" 
+      sx={{ 
+        backgroundColor: '#8B4513', // brown
+        color: '#FFF5E6', // cream
+      }}
+    >
       <Toolbar>
         <Typography
           variant="h6"
@@ -59,10 +64,34 @@ const Navbar = () => {
             color: 'inherit',
             display: 'flex',
             alignItems: 'center',
+            '&:hover': {
+              color: '#FF7F50', // coral
+            },
+            fontFamily: '"Dancing Script", cursive',
+            fontWeight: 700,
+            fontSize: '2rem',
+            letterSpacing: '1px',
           }}
         >
-          <ArtTrack sx={{ mr: 1 }} />
-          Rwandan Art Gallery
+          <Palette 
+            sx={{ 
+              mr: 1, 
+              fontSize: 36,
+              color: '#FFFFFF', // white
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
+            }} 
+          />
+          <Box
+            sx={{
+              color: '#FFFFFF', // white
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              '&:hover': {
+                color: '#FF7F50', // coral
+              },
+            }}
+          >
+            Gallerio
+          </Box>
         </Typography>
 
         {isMobile ? (
@@ -80,8 +109,17 @@ const Navbar = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
+              <MenuItem component={RouterLink} to="/" onClick={handleClose}>
+                <Home sx={{ mr: 1 }} /> Home
+              </MenuItem>
               <MenuItem component={RouterLink} to="/gallery" onClick={handleClose}>
                 Gallery
+              </MenuItem>
+              <MenuItem component={RouterLink} to="/artists" onClick={handleClose}>
+                Artists
+              </MenuItem>
+              <MenuItem component={RouterLink} to="/about" onClick={handleClose}>
+                About
               </MenuItem>
               {isAuthenticated ? (
                 <>
@@ -92,44 +130,69 @@ const Navbar = () => {
                   >
                     Dashboard
                   </MenuItem>
-                  <MenuItem
-                    component={RouterLink}
-                    to="/messages"
-                    onClick={handleClose}
-                  >
-                    Messages
-                  </MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </>
               ) : (
-                <>
-                  <MenuItem
-                    component={RouterLink}
-                    to="/login"
-                    onClick={handleClose}
-                  >
-                    Login
-                  </MenuItem>
-                  <MenuItem
-                    component={RouterLink}
-                    to="/register"
-                    onClick={handleClose}
-                  >
-                    Register
-                  </MenuItem>
-                </>
+                <MenuItem
+                  component={RouterLink}
+                  to="/login"
+                  onClick={handleClose}
+                >
+                  Login
+                </MenuItem>
               )}
             </Menu>
           </>
         ) : (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button
+              color="inherit"
+              component={RouterLink}
+              to="/"
+              startIcon={<Home />}
+              sx={{
+                '&:hover': {
+                  color: '#FF7F50', // coral
+                },
+              }}
+            >
+              Home
+            </Button>
             <Button
               color="inherit"
               component={RouterLink}
               to="/gallery"
-              startIcon={<ArtTrack />}
+              sx={{
+                '&:hover': {
+                  color: '#FF7F50', // coral
+                },
+              }}
             >
               Gallery
+            </Button>
+            <Button
+              color="inherit"
+              component={RouterLink}
+              to="/artists"
+              sx={{
+                '&:hover': {
+                  color: '#FF7F50', // coral
+                },
+              }}
+            >
+              Artists
+            </Button>
+            <Button
+              color="inherit"
+              component={RouterLink}
+              to="/about"
+              sx={{
+                '&:hover': {
+                  color: '#FF7F50', // coral
+                },
+              }}
+            >
+              About
             </Button>
 
             {isAuthenticated ? (
@@ -138,22 +201,22 @@ const Navbar = () => {
                   color="inherit"
                   component={RouterLink}
                   to="/dashboard"
-                  startIcon={<AccountCircle />}
+                  sx={{
+                    '&:hover': {
+                      color: '#FF7F50', // coral
+                    },
+                  }}
                 >
                   Dashboard
-                </Button>
-                <Button
-                  color="inherit"
-                  component={RouterLink}
-                  to="/messages"
-                  startIcon={<Chat />}
-                >
-                  Messages
                 </Button>
                 <IconButton
                   onClick={handleMenu}
                   color="inherit"
-                  sx={{ ml: 2 }}
+                  sx={{
+                    '&:hover': {
+                      color: '#FF7F50', // coral
+                    },
+                  }}
                 >
                   <Avatar
                     alt={user?.username}
@@ -177,22 +240,19 @@ const Navbar = () => {
                 </Menu>
               </>
             ) : (
-              <>
-                <Button
-                  color="inherit"
-                  component={RouterLink}
-                  to="/login"
-                >
-                  Login
-                </Button>
-                <Button
-                  color="inherit"
-                  component={RouterLink}
-                  to="/register"
-                >
-                  Register
-                </Button>
-              </>
+              <Button
+                color="inherit"
+                component={RouterLink}
+                to="/login"
+                sx={{
+                  backgroundColor: '#FF7F50', // coral
+                  '&:hover': {
+                    backgroundColor: '#FA8072', // salmon
+                  },
+                }}
+              >
+                Login
+              </Button>
             )}
           </Box>
         )}
