@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  body {
+    font-family: 'Poppins', sans-serif;
+    @apply bg-cream;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-brown;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-coral hover:bg-salmon text-cream px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg;
+  }
+
+  .nav-link {
+    @apply text-cream hover:text-salmon transition-colors duration-300 font-medium;
+  }
+
+  .section-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .hero-gradient {
+    background: linear-gradient(135deg, #5C3A21 0%, rgba(92, 58, 33, 0.8) 100%);
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+} 
