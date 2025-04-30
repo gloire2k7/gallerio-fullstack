@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { register } from '../../store/slices/authSlice';
+import { registerUser } from '../../services/api';
 
 const Register = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -45,17 +43,13 @@ const Register = () => {
     try {
       const formDataToSend = new FormData();
       Object.keys(formData).forEach(key => {
-        if (formData[key] !== null && key !== 'confirmPassword') {
+        if (formData[key] !== null) {
           formDataToSend.append(key, formData[key]);
         }
       });
 
-      const resultAction = await dispatch(register(formDataToSend));
-      if (register.fulfilled.match(resultAction)) {
+      await registerUser(formDataToSend);
       navigate('/login');
-      } else {
-        setError(resultAction.payload || 'Registration failed. Please try again.');
-      }
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     }
