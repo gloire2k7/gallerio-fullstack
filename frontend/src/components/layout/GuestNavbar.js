@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const LandingNavbar = () => {
+const GuestNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -31,18 +31,11 @@ const LandingNavbar = () => {
         <div className="hidden md:flex items-center space-x-8">
           <Link to="/gallery" className="nav-link">Gallery</Link>
           <Link to="/artists" className="nav-link">Artists</Link>
-          <Link to="/about" className="nav-link">About</Link>
           <Link
             to="/login"
             className="bg-coral/90 hover:bg-salmon px-6 py-2 rounded-lg text-cream transition-all duration-300 hover:shadow-lg"
           >
             Login
-          </Link>
-          <Link
-            to="/register"
-            className="border border-cream hover:bg-cream/10 px-6 py-2 rounded-lg text-cream transition-all duration-300"
-          >
-            Register
           </Link>
         </div>
 
@@ -56,4 +49,4 @@ const LandingNavbar = () => {
   );
 };
 
-export default LandingNavbar; 
+export default GuestNavbar; 

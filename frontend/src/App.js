@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { useSelector } from 'react-redux';
 
 // Layout Components
-import Navbar from './components/layout/Navbar';
+import NavbarSelector from './components/layout/NavbarSelector';
 import Footer from './components/layout/Footer';
 
 // Public Pages
@@ -23,6 +23,8 @@ import Profile from './pages/Profile';
 import Messages from './pages/Messages';
 import ArtworkManagement from './pages/ArtworkManagement';
 import Orders from './pages/Orders';
+import ArtistGallery from './pages/ArtistGallery';
+import CollectorGallery from './pages/CollectorGallery';
 
 const theme = createTheme({
   palette: {
@@ -51,7 +53,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Navbar />
+        <NavbarSelector />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
@@ -62,17 +64,23 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes */}
+          {/* Artist Routes */}
+          <Route path="/artist" element={<PrivateRoute role="artist" />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="gallery" element={<ArtistGallery />} />
+            <Route path="artworks" element={<ArtworkManagement />} />
+          </Route>
+
+          {/* Collector Routes */}
+          <Route path="/collector" element={<PrivateRoute role="collector" />}>
+            <Route path="home" element={<Dashboard />} />
+            <Route path="gallery" element={<CollectorGallery />} />
+            <Route path="orders" element={<Orders />} />
+          </Route>
+
+          {/* Artist Routes */}
           <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/profile"
+            path="/artist/profile"
             element={
               <PrivateRoute>
                 <Profile />
@@ -80,26 +88,28 @@ function App() {
             }
           />
           <Route
-            path="/messages"
+            path="/artist/messages"
             element={
               <PrivateRoute>
                 <Messages />
               </PrivateRoute>
             }
           />
+
+          {/* Collector Routes */}
           <Route
-            path="/artwork-management"
+            path="/collector/profile"
             element={
               <PrivateRoute>
-                <ArtworkManagement />
+                <Profile />
               </PrivateRoute>
             }
           />
           <Route
-            path="/orders"
+            path="/collector/messages"
             element={
               <PrivateRoute>
-                <Orders />
+                <Messages />
               </PrivateRoute>
             }
           />

@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
 
 const API_URL = 'http://localhost:8080/api';
 
@@ -9,8 +8,7 @@ export const login = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_URL}/auth/login`, credentials);
-      const { token } = response.data;
-      localStorage.setItem('token', token);
+      console.log('Login Response:', response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -32,7 +30,7 @@ export const register = createAsyncThunk(
 
 const initialState = {
   user: null,
-  token: localStorage.getItem('token'),
+  token: null,
   isAuthenticated: false,
   loading: false,
   error: null,
@@ -43,7 +41,6 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      localStorage.removeItem('token');
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
@@ -59,10 +56,11 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
+        console.log('Login Fulfilled:', action.payload);
         state.loading = false;
         state.isAuthenticated = true;
+        state.user = action.payload;
         state.token = action.payload.token;
-        state.user = jwtDecode(action.payload.token);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -72,8 +70,11 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(register.fulfilled, (state) => {
+      .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        state.token = action.payload.token;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;

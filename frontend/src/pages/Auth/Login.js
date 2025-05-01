@@ -20,9 +20,10 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await authService.login(formData);
+      const response = await authService.login(formData.email, formData.password);
+      dispatch(login(response));
       
-      // Check user role and navigate accordingly
+      // Redirect based on role
       if (response.role === 'ARTIST') {
         navigate('/artist/dashboard');
       } else if (response.role === 'COLLECTOR') {
@@ -31,7 +32,7 @@ const Login = () => {
         navigate('/');
       }
     } catch (err) {
-      setError(err.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }

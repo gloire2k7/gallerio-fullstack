@@ -10,12 +10,28 @@ const api = axios.create({
     withCredentials: true,
 });
 
+// Add a request interceptor to add the auth token
+api.interceptors.request.use(
+    (config) => {
+        // Get the token from localStorage
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Add a response interceptor to handle errors
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
             // Handle unauthorized access
+            localStorage.removeItem('token');
             window.location.href = '/login';
         }
         return Promise.reject(error);
@@ -23,16 +39,20 @@ api.interceptors.response.use(
 );
 
 export const authService = {
-    login: async (credentials) => {
+    login: async (email, password) => {
         try {
             const response = await api.post('/auth/login', {
-                email: credentials.email,
-                password: credentials.password
+                email,
+                password
             });
+            // Store the token
+            if (response.data.token) {
+                localStorage.setItem('token', response.data.token);
+            }
             return response.data;
         } catch (error) {
             console.error('Login error:', error.response?.data || error.message);
-            throw error.response?.data || error.message;
+            throw error;
         }
     },
 
@@ -58,15 +78,16 @@ export const authService = {
     },
 
     logout: () => {
-        // Clear any session data if needed
+        localStorage.removeItem('token');
+        window.location.href = '/login';
     }
 };
 
 // Artist related endpoints
 export const artistService = {
-    getArtworks: async (artistId) => {
+    getArtworks: async () => {
         try {
-            const response = await api.get(`/artworks/artist/${artistId}`);
+            const response = await api.get('/artworks/my-artworks');
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -75,11 +96,33 @@ export const artistService = {
     
     uploadArtwork: async (artworkData) => {
         try {
-            const response = await api.post('/artworks', artworkData);
+            const response = await api.post('/artworks', artworkData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
         }
+    }
+};
+
+export const collectorService = {
+    getAllArtworks: () => {
+        return api.get('/artworks').then(response => response.data);
+    },
+    likeArtwork: (artworkId) => {
+        return api.post(`/artworks/${artworkId}/like`).then(response => response.data);
+    },
+    dislikeArtwork: (artworkId) => {
+        return api.post(`/artworks/${artworkId}/dislike`).then(response => response.data);
+    },
+    orderArtwork: (artworkId) => {
+        return api.post(`/orders`, { artworkId }).then(response => response.data);
+    },
+    getOrders: () => {
+        return api.get('/orders').then(response => response.data);
     }
 };
 

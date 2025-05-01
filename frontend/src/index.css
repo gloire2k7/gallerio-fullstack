@@ -29,7 +29,7 @@
   }
 
   .hero-gradient {
-    background: linear-gradient(135deg, #5C3A21 0%, rgba(92, 58, 33, 0.8) 100%);
+    @apply bg-gradient-to-br from-brown via-brown/90 to-brown/80;
   }
 }
 

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../services/api';
+import { useDispatch } from 'react-redux';
+import { register } from '../../store/slices/authSlice';
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -18,6 +21,7 @@ const Register = () => {
 
   const [error, setError] = useState('');
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -34,6 +38,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
@@ -41,28 +46,21 @@ const Register = () => {
     }
 
     try {
-      // Create a new object with only the required fields
-      const registrationData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-        // Optional fields
-        location: formData.location || null,
-        bio: formData.bio || null,
-        profilePhoto: formData.profilePhoto || null
-      };
-
-      const response = await authService.register(registrationData);
+      const response = await authService.register(formData);
+      dispatch(register(response));
       
-      if (response.message === "User registered successfully") {
-        navigate('/login');
+      // Redirect based on role
+      if (response.role === 'ARTIST') {
+        navigate('/artist/dashboard');
+      } else if (response.role === 'COLLECTOR') {
+        navigate('/collector/home');
       } else {
-        setError(response.message || 'Registration failed. Please try again.');
+        navigate('/');
       }
     } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.');
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -268,9 +266,12 @@ const Register = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-cream bg-coral hover:bg-salmon focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral transition-colors"
+              disabled={loading}
+              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-cream ${
+                loading ? 'bg-coral/70 cursor-not-allowed' : 'bg-coral hover:bg-salmon'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral transition-colors`}
             >
-              Create Account
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </div>
         </form>
