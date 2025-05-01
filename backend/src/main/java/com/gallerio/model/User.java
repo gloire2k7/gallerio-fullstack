@@ -1,10 +1,8 @@
 package com.gallerio.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,38 +13,48 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "_user")
 public class User implements UserDetails {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
-    @Column(unique = true)
-    private String username;
+    private String firstName;
+    private String lastName;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
     @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // Optional fields
+    private String location;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    private String profilePhoto;
+
+    @Builder.Default
     private boolean enabled = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     @Override
@@ -68,4 +76,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
-} 
+}
