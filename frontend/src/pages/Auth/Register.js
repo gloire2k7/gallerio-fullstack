@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { registerUser } from '../../services/api';
+import { authService } from '../../services/api';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'collector',
+    role: 'COLLECTOR',
     location: '',
     bio: '',
     profilePhoto: null,
@@ -41,15 +41,26 @@ const Register = () => {
     }
 
     try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        if (formData[key] !== null) {
-          formDataToSend.append(key, formData[key]);
-        }
-      });
+      // Create a new object with only the required fields
+      const registrationData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        // Optional fields
+        location: formData.location || null,
+        bio: formData.bio || null,
+        profilePhoto: formData.profilePhoto || null
+      };
 
-      await registerUser(formDataToSend);
-      navigate('/login');
+      const response = await authService.register(registrationData);
+      
+      if (response.message === "User registered successfully") {
+        navigate('/login');
+      } else {
+        setError(response.message || 'Registration failed. Please try again.');
+      }
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     }
@@ -230,9 +241,9 @@ const Register = () => {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  onClick={() => setFormData({ ...formData, role: 'collector' })}
+                  onClick={() => setFormData({ ...formData, role: 'COLLECTOR' })}
                   className={`py-3 px-4 text-sm font-medium rounded-lg transition-colors ${
-                    formData.role === 'collector'
+                    formData.role === 'COLLECTOR'
                       ? 'bg-coral text-cream'
                       : 'bg-white border border-brown/20 text-brown hover:bg-brown/5'
                   }`}
@@ -241,9 +252,9 @@ const Register = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFormData({ ...formData, role: 'artist' })}
+                  onClick={() => setFormData({ ...formData, role: 'ARTIST' })}
                   className={`py-3 px-4 text-sm font-medium rounded-lg transition-colors ${
-                    formData.role === 'artist'
+                    formData.role === 'ARTIST'
                       ? 'bg-coral text-cream'
                       : 'bg-white border border-brown/20 text-brown hover:bg-brown/5'
                   }`}

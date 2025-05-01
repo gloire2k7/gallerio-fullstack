@@ -4,7 +4,57 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7758edec-be98-4434-8b21-89affa3ca652" name="Changes" comment="" />
+    <list default="true" id="7758edec-be98-4434-8b21-89affa3ca652" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/GallerioApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/GallerioApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/config/ApplicationConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/config/ApplicationConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/dto/LoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/dto/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/dto/RegisterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/model/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/model/Role.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/security/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/security/JwtService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/gallerio/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/GallerioApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/gallerio/GallerioApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/config/ApplicationConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/config/SecurityConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/controller/AuthController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/dto/AuthResponse$AuthResponseBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/dto/AuthResponse.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/dto/LoginRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/dto/RegisterRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/model/Role.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/gallerio/model/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/gallerio/repository/UserRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/security/JwtAuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/gallerio/security/JwtAuthenticationFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/security/JwtService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/gallerio/security/JwtService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/gallerio/service/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/gallerio/service/AuthService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/.eslintcache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/0.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/0.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/10.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/10.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/11.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/11.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/12.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/12.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/14.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/14.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/2.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/2.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/4.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/4.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/5.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/5.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/6.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/6.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/7.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/7.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/8.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/8.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/9.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/9.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/index.pack" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/index.pack" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/index.pack.old" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/node_modules/.cache/default-development/index.pack.old" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Auth/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Auth/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Auth/Register.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Auth/Register.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/api.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +63,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;gloire2k7&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/gloire2k7/gallerio.git&quot;,
+    &quot;accountId&quot;: &quot;6019aaf7-c095-4d8a-8110-abb1d3289f31&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -30,7 +92,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.GalleryApplication.executor": "Run",
-    "git-widget-placeholder": "backend",
+    "git-widget-placeholder": "frontend",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Gloire/Documents/all/Year 2/projects/cursor",
     "node.js.detected.package.eslint": "true",
@@ -73,6 +135,10 @@
       <workItem from="1745823667469" duration="4547000" />
       <workItem from="1745954651134" duration="3503000" />
       <workItem from="1745958427696" duration="80000" />
+      <workItem from="1746046232121" duration="27000" />
+      <workItem from="1746046325763" duration="94000" />
+      <workItem from="1746048162483" duration="581000" />
+      <workItem from="1746048765490" duration="39000" />
     </task>
     <servers />
   </component>

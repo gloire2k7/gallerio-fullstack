@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../../store/slices/authSlice';
+import { authService } from '../../services/api';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,20 +20,15 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const resultAction = await dispatch(login(formData));
-      if (login.fulfilled.match(resultAction)) {
-        const response = resultAction.payload;
+      const response = await authService.login(formData);
       
       // Check user role and navigate accordingly
-      if (response.user.role === 'ARTIST') {
+      if (response.role === 'ARTIST') {
         navigate('/artist/dashboard');
-      } else if (response.user.role === 'COLLECTOR') {
+      } else if (response.role === 'COLLECTOR') {
         navigate('/collector/home');
       } else {
         navigate('/');
-        }
-      } else {
-        setError(resultAction.payload?.message || 'Login failed. Please try again.');
       }
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');
