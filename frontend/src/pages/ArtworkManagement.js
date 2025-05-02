@@ -23,6 +23,7 @@ const ArtworkManagement = () => {
     description: '',
     price: '',
     category: '',
+    status: '',
     image: null
   });
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -30,7 +31,8 @@ const ArtworkManagement = () => {
   const [error, setError] = useState('');
 
   // Get the current user's ID from localStorage or your auth context
-  const currentUserId = localStorage.getItem('userId'); // Adjust this based on how you store user info
+  const user = JSON.parse(localStorage.getItem('user'));
+  const currentUserId = user?.id;
 
   useEffect(() => {
     fetchArtworks();
@@ -74,6 +76,7 @@ const ArtworkManagement = () => {
       formDataToSend.append('description', formData.description);
       formDataToSend.append('price', formData.price);
       formDataToSend.append('category', formData.category);
+      formDataToSend.append('status', formData.status);
       formDataToSend.append('userId', currentUserId);
       if (formData.image) {
         formDataToSend.append('image', formData.image);
@@ -86,6 +89,7 @@ const ArtworkManagement = () => {
         description: '',
         price: '',
         category: '',
+        status: '',
         image: null
       });
       setPreviewUrl(null);
@@ -176,6 +180,20 @@ const ArtworkManagement = () => {
                         {category}
                       </MenuItem>
                     ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth margin="normal" required>
+                  <InputLabel className="text-brown">Status</InputLabel>
+                  <Select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    label="Status"
+                    className="text-brown"
+                  >
+                    <MenuItem value="AVAILABLE" className="text-brown">AVAILABLE</MenuItem>
+                    <MenuItem value="UNAVAILABLE" className="text-brown">UNAVAILABLE</MenuItem>
                   </Select>
                 </FormControl>
 

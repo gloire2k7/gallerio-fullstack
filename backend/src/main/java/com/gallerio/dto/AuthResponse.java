@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthResponse {
     private String token;
+    private Long id;
     private String username;
     private String email;
     private String role;
@@ -22,6 +23,7 @@ public class AuthResponse {
 
     public static class AuthResponseBuilder {
         private String token;
+        private Long id;
         private String username;
         private String email;
         private String role;
@@ -29,6 +31,11 @@ public class AuthResponse {
 
         public AuthResponseBuilder token(String token) {
             this.token = token;
+            return this;
+        }
+
+        public AuthResponseBuilder id(Long id) {
+            this.id = id;
             return this;
         }
 
@@ -53,7 +60,7 @@ public class AuthResponse {
         }
 
         public AuthResponse build() {
-            return new AuthResponse(token, username, email, role, message);
+            return new AuthResponse(token, id, username, email, role, message);
         }
     }
 }

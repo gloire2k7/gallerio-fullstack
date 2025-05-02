@@ -24,6 +24,9 @@ const Login = () => {
       const resultAction = await dispatch(login(formData));
       if (login.fulfilled.match(resultAction)) {
         const response = resultAction.payload;
+        // Store user and token in localStorage for later use
+        localStorage.setItem('user', JSON.stringify(response));
+        localStorage.setItem('token', response.token);
         // Redirect based on role
         if (response.role === 'ARTIST') {
           navigate('/artist/dashboard');
