@@ -20,19 +20,23 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await authService.login(formData.email, formData.password);
-      dispatch(login(response));
-      
-      // Redirect based on role
-      if (response.role === 'ARTIST') {
-        navigate('/artist/dashboard');
-      } else if (response.role === 'COLLECTOR') {
-        navigate('/collector/home');
+      // Dispatch the thunk with credentials
+      const resultAction = await dispatch(login(formData));
+      if (login.fulfilled.match(resultAction)) {
+        const response = resultAction.payload;
+        // Redirect based on role
+        if (response.role === 'ARTIST') {
+          navigate('/artist/dashboard');
+        } else if (response.role === 'COLLECTOR') {
+          navigate('/collector/home');
+        } else {
+          navigate('/');
+        }
       } else {
-        navigate('/');
+        setError(resultAction.payload?.message || 'Login failed. Please try again.');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
