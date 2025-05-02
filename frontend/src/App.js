@@ -65,18 +65,56 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/* Artist Routes */}
-          <Route path="/artist" element={<PrivateRoute role="artist" />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="gallery" element={<ArtistGallery />} />
-            <Route path="artworks" element={<ArtworkManagement />} />
-          </Route>
+          <Route
+            path="/artist/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/artist/gallery"
+            element={
+              <PrivateRoute>
+                <ArtistGallery />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/artist/artworks"
+            element={
+              <PrivateRoute>
+                <ArtworkManagement />
+              </PrivateRoute>
+            }
+          />
 
           {/* Collector Routes */}
-          <Route path="/collector" element={<PrivateRoute role="collector" />}>
-            <Route path="home" element={<Dashboard />} />
-            <Route path="gallery" element={<CollectorGallery />} />
-            <Route path="orders" element={<Orders />} />
-          </Route>
+          <Route
+            path="/collector/home"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/collector/gallery"
+            element={
+              <PrivateRoute>
+                <CollectorGallery />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/collector/orders"
+            element={
+              <PrivateRoute>
+                <Orders />
+              </PrivateRoute>
+            }
+          />
 
           {/* Artist Routes */}
           <Route
