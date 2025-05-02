@@ -89,6 +89,38 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/artist/inbox"
+            element={
+              <PrivateRoute>
+                <Messages />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/artist/messages"
+            element={
+              <PrivateRoute>
+                <Messages />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/artist/orders"
+            element={
+              <PrivateRoute>
+                <Orders />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/artist/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
 
           {/* Collector Routes */}
           <Route
@@ -115,26 +147,6 @@ function App() {
               </PrivateRoute>
             }
           />
-
-          {/* Artist Routes */}
-          <Route
-            path="/artist/profile"
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/artist/messages"
-            element={
-              <PrivateRoute>
-                <Messages />
-              </PrivateRoute>
-            }
-          />
-
-          {/* Collector Routes */}
           <Route
             path="/collector/profile"
             element={

@@ -85,6 +85,15 @@ export const authService = {
 
 // Artist related endpoints
 export const artistService = {
+    getDashboardStats: async () => {
+        try {
+            const response = await api.get('/artist/dashboard/stats');
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
     getArtworks: async () => {
         try {
             const response = await api.get('/artworks/my-artworks');
@@ -105,6 +114,62 @@ export const artistService = {
         } catch (error) {
             throw error.response?.data || error.message;
         }
+    },
+
+    deleteArtwork: async (artworkId) => {
+        try {
+            const response = await api.delete(`/artworks/${artworkId}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    // Messages endpoints
+    getMessages: async () => {
+        try {
+            const response = await api.get('/messages');
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    replyToMessage: async (messageId, content) => {
+        try {
+            const response = await api.post(`/messages/${messageId}/reply`, { content });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    deleteMessage: async (messageId) => {
+        try {
+            const response = await api.delete(`/messages/${messageId}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    // Orders endpoints
+    getOrders: async () => {
+        try {
+            const response = await api.get('/orders/artist');
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    updateOrderStatus: async (orderId, status) => {
+        try {
+            const response = await api.patch(`/orders/${orderId}/status`, { status });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
     }
 };
 
@@ -120,9 +185,6 @@ export const collectorService = {
     },
     orderArtwork: (artworkId) => {
         return api.post(`/orders`, { artworkId }).then(response => response.data);
-    },
-    getOrders: () => {
-        return api.get('/orders').then(response => response.data);
     }
 };
 

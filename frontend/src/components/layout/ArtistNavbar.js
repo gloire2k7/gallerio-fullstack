@@ -31,8 +31,8 @@ const ArtistNavbar = ({ user }) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/gallery" className="text-cream hover:text-coral transition-colors">Gallery</Link>
-            <Link to="/artists" className="text-cream hover:text-coral transition-colors">Artists</Link>
+            <Link to="/artist/dashboard" className="text-cream hover:text-coral transition-colors">Dashboard</Link>
+            <Link to="/artist/gallery" className="text-cream hover:text-coral transition-colors">Gallery</Link>
             <Link to="/artist/artworks" className="text-cream hover:text-coral transition-colors">My Artworks</Link>
             <Link to="/artist/inbox" className="text-cream hover:text-coral transition-colors">Inbox</Link>
             <Link to="/artist/orders" className="text-cream hover:text-coral transition-colors">Orders</Link>
@@ -95,18 +95,18 @@ const ArtistNavbar = ({ user }) => {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link
-              to="/gallery"
+              to="/artist/dashboard"
+              className="block px-3 py-2 text-cream hover:text-coral transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/artist/gallery"
               className="block px-3 py-2 text-cream hover:text-coral transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Gallery
-            </Link>
-            <Link
-              to="/artists"
-              className="block px-3 py-2 text-cream hover:text-coral transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Artists
             </Link>
             <Link
               to="/artist/artworks"

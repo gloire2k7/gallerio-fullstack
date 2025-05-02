@@ -1,91 +1,181 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Container, Paper, Typography, List, ListItem, ListItemText, TextField, Button, Grid } from '@mui/material';
-import axios from 'axios';
+import {
+  Container,
+  Typography,
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  Paper,
+  Divider,
+  TextField,
+  Button,
+  IconButton,
+} from '@mui/material';
+import { Reply as ReplyIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { artistService } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const Messages = () => {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [selectedChat, setSelectedChat] = useState(null);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [reply, setReply] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // TODO: Implement message fetching
-    const fetchMessages = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/api/messages');
-        setMessages(response.data);
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
-    };
-
     fetchMessages();
   }, []);
 
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
+  const fetchMessages = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await artistService.getMessages();
+      setMessages(response);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      setError('Failed to fetch messages. Please try again.');
+      if (error.response?.status === 401) {
+        navigate('/login');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // TODO: Implement message sending
-    console.log('Sending message:', newMessage);
-    setNewMessage('');
+  const handleReply = async () => {
+    if (!selectedMessage || !reply.trim()) return;
+
+    try {
+      await artistService.replyToMessage(selectedMessage.id, reply);
+      setReply('');
+      fetchMessages();
+    } catch (error) {
+      console.error('Error sending reply:', error);
+      setError('Failed to send reply. Please try again.');
+    }
+  };
+
+  const handleDelete = async (messageId) => {
+    if (window.confirm('Are you sure you want to delete this message?')) {
+      try {
+        await artistService.deleteMessage(messageId);
+        fetchMessages();
+        if (selectedMessage?.id === messageId) {
+          setSelectedMessage(null);
+        }
+      } catch (error) {
+        console.error('Error deleting message:', error);
+        setError('Failed to delete message. Please try again.');
+      }
+    }
   };
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Messages
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 2, height: '70vh', overflow: 'auto' }}>
-              <List>
-                {messages.map((message) => (
+    <Container maxWidth="lg" className="py-8">
+      <Typography variant="h4" className="text-brown mb-6">
+        Messages
+      </Typography>
+
+      {error && (
+        <Box className="mb-4">
+          <Typography className="text-red-500">{error}</Typography>
+        </Box>
+      )}
+
+      {loading ? (
+        <Typography>Loading...</Typography>
+      ) : (
+        <Box className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Paper className="p-4 md:col-span-1 bg-cream">
+            <Typography variant="h6" className="text-brown mb-4">
+              Inbox
+            </Typography>
+            <List>
+              {messages.map((message) => (
+                <React.Fragment key={message.id}>
                   <ListItem
-                    key={message.id}
                     button
-                    selected={selectedChat === message.id}
-                    onClick={() => setSelectedChat(message.id)}
+                    selected={selectedMessage?.id === message.id}
+                    onClick={() => setSelectedMessage(message)}
+                    className={message.unread ? 'bg-coral/10' : ''}
                   >
+                    <ListItemAvatar>
+                      <Avatar>{message.sender.name[0]}</Avatar>
+                    </ListItemAvatar>
                     <ListItemText
                       primary={message.sender.name}
-                      secondary={message.preview}
+                      secondary={message.subject}
+                      className="text-brown"
                     />
                   </ListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={8}>
-            <Paper sx={{ p: 2, height: '70vh', display: 'flex', flexDirection: 'column' }}>
-              {selectedChat ? (
-                <>
-                  <Box sx={{ flexGrow: 1, overflow: 'auto', mb: 2 }}>
-                    {/* Message history will go here */}
+                  <Divider />
+                </React.Fragment>
+              ))}
+            </List>
+          </Paper>
+
+          <Paper className="p-4 md:col-span-2 bg-cream">
+            {selectedMessage ? (
+              <Box>
+                <Box className="flex justify-between items-start mb-4">
+                  <Box>
+                    <Typography variant="h6" className="text-brown">
+                      {selectedMessage.subject}
+                    </Typography>
+                    <Typography variant="subtitle2" className="text-brown/70">
+                      From: {selectedMessage.sender.name}
+                    </Typography>
+                    <Typography variant="subtitle2" className="text-brown/70">
+                      Date: {new Date(selectedMessage.createdAt).toLocaleString()}
+                    </Typography>
                   </Box>
-                  <form onSubmit={handleSendMessage}>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <TextField
-                        fullWidth
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
-                      />
-                      <Button type="submit" variant="contained" color="primary">
-                        Send
-                      </Button>
-                    </Box>
-                  </form>
-                </>
-              ) : (
-                <Typography variant="body1" color="text.secondary" align="center">
-                  Select a conversation to start messaging
+                  <IconButton
+                    onClick={() => handleDelete(selectedMessage.id)}
+                    className="text-brown"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+
+                <Typography className="text-brown mb-4 whitespace-pre-wrap">
+                  {selectedMessage.content}
                 </Typography>
-              )}
-            </Paper>
-          </Grid>
-        </Grid>
-      </Box>
+
+                <Divider className="my-4" />
+
+                <Box>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value={reply}
+                    onChange={(e) => setReply(e.target.value)}
+                    placeholder="Write your reply..."
+                    className="mb-4"
+                  />
+                  <Button
+                    variant="contained"
+                    startIcon={<ReplyIcon />}
+                    onClick={handleReply}
+                    className="bg-coral hover:bg-salmon text-cream"
+                  >
+                    Send Reply
+                  </Button>
+                </Box>
+              </Box>
+            ) : (
+              <Typography className="text-brown/70 text-center">
+                Select a message to view
+              </Typography>
+            )}
+          </Paper>
+        </Box>
+      )}
     </Container>
   );
 };
