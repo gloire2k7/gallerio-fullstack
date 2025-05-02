@@ -32,8 +32,8 @@ const CollectorNavbar = ({ user }) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/collector/home" className="text-cream hover:text-coral transition-colors">Home</Link>
-            <Link to="/gallery" className="text-cream hover:text-coral transition-colors">Gallery</Link>
-            <Link to="/artists" className="text-cream hover:text-coral transition-colors">Artists</Link>
+            <Link to="/collector/gallery" className="text-cream hover:text-coral transition-colors">Gallery</Link>
+            <Link to="/collector/artists" className="text-cream hover:text-coral transition-colors">Artists</Link>
             <Link to="/collector/inbox" className="text-cream hover:text-coral transition-colors">Inbox</Link>
             
             {/* Profile Dropdown */}
@@ -101,14 +101,14 @@ const CollectorNavbar = ({ user }) => {
               Home
             </Link>
             <Link
-              to="/gallery"
+              to="/collector/gallery"
               className="block px-3 py-2 text-cream hover:text-coral transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Gallery
             </Link>
             <Link
-              to="/artists"
+              to="/collector/artists"
               className="block px-3 py-2 text-cream hover:text-coral transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >

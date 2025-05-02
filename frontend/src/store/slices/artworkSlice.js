@@ -74,12 +74,21 @@ const artworkSlice = createSlice({
   name: 'artwork',
   initialState,
   reducers: {
-    clearError: (state) => {
-      state.error = null;
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+    setArtworks: (state, action) => {
+      state.artworks = action.payload;
     },
     clearCurrentArtwork: (state) => {
       state.currentArtwork = null;
     },
+    clearError: (state) => {
+      state.error = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -154,5 +163,12 @@ const artworkSlice = createSlice({
   },
 });
 
-export const { clearError, clearCurrentArtwork } = artworkSlice.actions;
+export const {
+  setLoading,
+  setError,
+  setArtworks,
+  clearCurrentArtwork,
+  clearError
+} = artworkSlice.actions;
+
 export default artworkSlice.reducer; 

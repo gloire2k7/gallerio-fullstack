@@ -185,6 +185,33 @@ export const collectorService = {
     },
     orderArtwork: (artworkId) => {
         return api.post(`/orders`, { artworkId }).then(response => response.data);
+    },
+    getMessages: async () => {
+        try {
+            const response = await api.get('/messages/collector');
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+    replyToMessage: async (messageId, content) => {
+        try {
+            const response = await api.post(`/messages/${messageId}/reply`, { content });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+    deleteMessage: async (messageId) => {
+        try {
+            const response = await api.delete(`/messages/${messageId}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+    getOrders: () => {
+        return api.get('/orders/collector').then(response => response.data);
     }
 };
 
@@ -197,4 +224,29 @@ export const getArtistArtworks = async (artistId) => {
     } catch (error) {
         throw error.response?.data || error.message;
     }
+};
+
+export const getAllArtworks = async () => {
+    const response = await axios.get('/api/artworks');
+    return response.data;
+};
+
+export const likeArtwork = async (artworkId) => {
+    const response = await axios.post(`/api/artworks/${artworkId}/like`);
+    return response.data;
+};
+
+export const commentOnArtwork = async (artworkId, comment) => {
+    const response = await axios.post(`/api/artworks/${artworkId}/comments`, { comment });
+    return response.data;
+};
+
+export const followArtist = async (artistId) => {
+    const response = await axios.post(`/api/artists/${artistId}/follow`);
+    return response.data;
+};
+
+export const searchArtworks = async (query) => {
+    const response = await axios.get(`/api/artworks/search?q=${encodeURIComponent(query)}`);
+    return response.data;
 };

@@ -24,7 +24,10 @@ import Messages from './pages/Messages';
 import ArtworkManagement from './pages/ArtworkManagement';
 import Orders from './pages/Orders';
 import ArtistGallery from './pages/ArtistGallery';
-import CollectorGallery from './pages/CollectorGallery';
+import CollectorHome from './pages/Collector/Home';
+import CollectorMessages from './pages/Collector/Messages';
+import CollectorGallery from './pages/Collector/Gallery';
+import CollectorArtists from './pages/Collector/Artists';
 
 const theme = createTheme({
   palette: {
@@ -127,7 +130,7 @@ function App() {
             path="/collector/home"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <CollectorHome />
               </PrivateRoute>
             }
           />
@@ -140,10 +143,18 @@ function App() {
             }
           />
           <Route
-            path="/collector/orders"
+            path="/collector/artists"
             element={
               <PrivateRoute>
-                <Orders />
+                <CollectorArtists />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/collector/inbox"
+            element={
+              <PrivateRoute>
+                <CollectorMessages />
               </PrivateRoute>
             }
           />
@@ -152,14 +163,6 @@ function App() {
             element={
               <PrivateRoute>
                 <Profile />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/collector/messages"
-            element={
-              <PrivateRoute>
-                <Messages />
               </PrivateRoute>
             }
           />
