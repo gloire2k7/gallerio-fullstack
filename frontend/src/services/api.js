@@ -215,6 +215,58 @@ export const collectorService = {
     }
 };
 
+export const userService = {
+    getProfile: async () => {
+        try {
+            const response = await api.get('/users/profile');
+            return response.data;
+        } catch (error) {
+            console.error('Get profile error:', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
+    updateProfile: async (profileData) => {
+        try {
+            // If profileData contains a file, use FormData
+            if (profileData.profilePhoto instanceof File) {
+                const formData = new FormData();
+                formData.append('profilePhoto', profileData.profilePhoto);
+                formData.append('firstName', profileData.firstName);
+                formData.append('lastName', profileData.lastName);
+                formData.append('location', profileData.location);
+                formData.append('bio', profileData.bio);
+
+                const response = await api.put('/users/profile', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                return response.data;
+            }
+
+            const response = await api.put('/users/profile', profileData);
+            return response.data;
+        } catch (error) {
+            console.error('Update profile error:', error.response?.data || error.message);
+            throw error;
+        }
+    },
+
+    changePassword: async (currentPassword, newPassword) => {
+        try {
+            const response = await api.post('/users/change-password', {
+                currentPassword,
+                newPassword
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Change password error:', error.response?.data || error.message);
+            throw error;
+        }
+    }
+};
+
 export default api;
 
 export const getArtistArtworks = async (artistId) => {
