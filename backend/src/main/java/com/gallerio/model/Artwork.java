@@ -3,6 +3,7 @@ package com.gallerio.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.Pattern;
 
 @Data
 @Entity
@@ -26,6 +27,10 @@ public class Artwork {
 
     @Column(nullable = false)
     private String imageUrl;
+
+    @Column(nullable = false)
+    @Pattern(regexp = "^(AVAILABLE|UNAVAILABLE)$", message = "Status must be either AVAILABLE or UNAVAILABLE")
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

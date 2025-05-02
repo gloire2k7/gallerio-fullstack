@@ -3,8 +3,10 @@ package com.gallerio.controller;
 import com.gallerio.dto.ArtworkDTO;
 import com.gallerio.service.ArtworkService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,8 +18,25 @@ public class ArtworkController {
     @Autowired
     private ArtworkService artworkService;
 
-    @PostMapping
-    public ResponseEntity<ArtworkDTO> createArtwork(@RequestBody ArtworkDTO artworkDTO) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ArtworkDTO> createArtwork(
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("price") Double price,
+            @RequestParam("category") String category,
+            @RequestParam("status") String status,
+            @RequestParam("userId") Long userId,
+            @RequestParam("image") MultipartFile image) {
+        
+        ArtworkDTO artworkDTO = new ArtworkDTO();
+        artworkDTO.setTitle(title);
+        artworkDTO.setDescription(description);
+        artworkDTO.setPrice(price);
+        artworkDTO.setCategory(category);
+        artworkDTO.setStatus(status);
+        artworkDTO.setUserId(userId);
+        artworkDTO.setImage(image);
+        
         return ResponseEntity.ok(artworkService.createArtwork(artworkDTO));
     }
 

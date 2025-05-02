@@ -9,10 +9,17 @@ import com.gallerio.model.Role;
 import com.gallerio.service.ArtworkService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,10 +32,13 @@ public class ArtworkServiceImpl implements ArtworkService {
     @Autowired
     private UserRepository userRepository;
 
+    @Value("${app.upload.dir:uploads}")
+    private String uploadDir;
+
     @Override
     public ArtworkDTO createArtwork(ArtworkDTO artworkDTO) {
         Artwork artwork = new Artwork();
-        BeanUtils.copyProperties(artworkDTO, artwork);
+        BeanUtils.copyProperties(artworkDTO, artwork, "image");
         
         User user = userRepository.findById(artworkDTO.getUserId())
             .orElseThrow(() -> new RuntimeException("User not found"));
@@ -39,6 +49,32 @@ public class ArtworkServiceImpl implements ArtworkService {
         }
         
         artwork.setUser(user);
+
+        // Set the status from the DTO
+        artwork.setStatus(artworkDTO.getStatus());
+
+        // Handle image upload
+        if (artworkDTO.getImage() != null && !artworkDTO.getImage().isEmpty()) {
+            try {
+                // Create upload directory if it doesn't exist
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                // Generate unique filename
+                String filename = UUID.randomUUID().toString() + "_" + artworkDTO.getImage().getOriginalFilename();
+                Path filePath = uploadPath.resolve(filename);
+
+                // Save the file
+                Files.copy(artworkDTO.getImage().getInputStream(), filePath);
+
+                // Set the image URL in the artwork
+                artwork.setImageUrl("/uploads/" + filename);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to store image file", e);
+            }
+        }
         
         Artwork savedArtwork = artworkRepository.save(artwork);
         BeanUtils.copyProperties(savedArtwork, artworkDTO);
