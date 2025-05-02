@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Container, Typography, Grid, Paper, Button, TextField, Select, MenuItem, FormControl, InputLabel, Alert } from '@mui/material';
-import { artistService } from '../services/api';
+import { Box, Container, Typography, Grid, Paper, Button, TextField, Select, MenuItem, FormControl, InputLabel, Alert, IconButton } from '@mui/material';
+import { artworkService } from '../services/api';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
 
 const categories = [
@@ -28,6 +29,9 @@ const ArtworkManagement = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Get the current user's ID from localStorage or your auth context
+  const currentUserId = localStorage.getItem('userId'); // Adjust this based on how you store user info
+
   useEffect(() => {
     fetchArtworks();
   }, []);
@@ -35,14 +39,11 @@ const ArtworkManagement = () => {
   const fetchArtworks = async () => {
     try {
       setError('');
-      const response = await artistService.getArtworks();
+      const response = await artworkService.getArtworksByUser(currentUserId);
       setArtworks(response);
     } catch (error) {
       console.error('Error fetching artworks:', error);
       setError('Failed to fetch artworks. Please try again.');
-      if (error.response?.status === 401) {
-        navigate('/login');
-      }
     }
   };
 
@@ -73,11 +74,12 @@ const ArtworkManagement = () => {
       formDataToSend.append('description', formData.description);
       formDataToSend.append('price', formData.price);
       formDataToSend.append('category', formData.category);
+      formDataToSend.append('userId', currentUserId);
       if (formData.image) {
         formDataToSend.append('image', formData.image);
       }
 
-      await artistService.uploadArtwork(formDataToSend);
+      await artworkService.createArtwork(formDataToSend);
       await fetchArtworks();
       setFormData({
         title: '',
@@ -90,11 +92,20 @@ const ArtworkManagement = () => {
     } catch (error) {
       console.error('Error creating artwork:', error);
       setError(error.response?.data?.message || 'Failed to create artwork. Please try again.');
-      if (error.response?.status === 401) {
-        navigate('/login');
-      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this artwork?')) {
+      try {
+        await artworkService.deleteArtwork(id);
+        await fetchArtworks();
+      } catch (error) {
+        console.error('Error deleting artwork:', error);
+        setError('Failed to delete artwork. Please try again.');
+      }
     }
   };
 
@@ -127,12 +138,6 @@ const ArtworkManagement = () => {
                   margin="normal"
                   required
                   className="text-brown"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      '&:hover fieldset': { borderColor: 'rgba(139, 69, 19, 0.4)' },
-                      '&.Mui-focused fieldset': { borderColor: '#FF6B6B' }
-                    }
-                  }}
                 />
                 <TextField
                   fullWidth
@@ -145,12 +150,6 @@ const ArtworkManagement = () => {
                   rows={4}
                   required
                   className="text-brown"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      '&:hover fieldset': { borderColor: 'rgba(139, 69, 19, 0.4)' },
-                      '&.Mui-focused fieldset': { borderColor: '#FF6B6B' }
-                    }
-                  }}
                 />
                 <TextField
                   fullWidth
@@ -162,12 +161,6 @@ const ArtworkManagement = () => {
                   margin="normal"
                   required
                   className="text-brown"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      '&:hover fieldset': { borderColor: 'rgba(139, 69, 19, 0.4)' },
-                      '&.Mui-focused fieldset': { borderColor: '#FF6B6B' }
-                    }
-                  }}
                 />
                 <FormControl fullWidth margin="normal" required>
                   <InputLabel className="text-brown">Category</InputLabel>
@@ -177,11 +170,6 @@ const ArtworkManagement = () => {
                     onChange={handleChange}
                     label="Category"
                     className="text-brown"
-                    sx={{
-                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(139, 69, 19, 0.2)' },
-                      '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(139, 69, 19, 0.4)' },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#FF6B6B' }
-                    }}
                   >
                     {categories.map((category) => (
                       <MenuItem key={category} value={category} className="text-brown">
@@ -243,7 +231,14 @@ const ArtworkManagement = () => {
               <Grid container spacing={2}>
                 {artworks.map((artwork) => (
                   <Grid item xs={12} sm={6} key={artwork.id}>
-                    <Paper sx={{ p: 2 }} className="bg-white">
+                    <Paper sx={{ p: 2 }} className="bg-white relative">
+                      <IconButton
+                        className="absolute top-2 right-2 text-coral hover:text-salmon"
+                        onClick={() => handleDelete(artwork.id)}
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
                       <img
                         src={artwork.imageUrl}
                         alt={artwork.title}
@@ -259,14 +254,6 @@ const ArtworkManagement = () => {
                       <Typography variant="body2" className="text-brown/70">
                         {artwork.category}
                       </Typography>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{ mt: 1 }}
-                        className="border-coral text-coral hover:bg-coral/10"
-                      >
-                        Edit
-                      </Button>
                     </Paper>
                   </Grid>
                 ))}

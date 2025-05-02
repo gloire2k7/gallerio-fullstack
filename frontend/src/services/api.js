@@ -302,3 +302,32 @@ export const searchArtworks = async (query) => {
     const response = await axios.get(`/api/artworks/search?q=${encodeURIComponent(query)}`);
     return response.data;
 };
+
+export const artworkService = {
+  // Create new artwork
+  createArtwork: async (formData) => {
+    const response = await api.post('/artworks', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  // Get all artworks
+  getAllArtworks: async () => {
+    const response = await api.get('/artworks');
+    return response.data;
+  },
+
+  // Get artworks by user
+  getArtworksByUser: async (userId) => {
+    const response = await api.get(`/artworks/user/${userId}`);
+    return response.data;
+  },
+
+  // Delete artwork
+  deleteArtwork: async (id) => {
+    await api.delete(`/artworks/${id}`);
+  }
+};
