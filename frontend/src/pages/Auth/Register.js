@@ -48,6 +48,8 @@ const Register = () => {
     try {
       const response = await authService.register(formData);
       dispatch(register(response));
+      // Store user in localStorage for persistence
+      localStorage.setItem('user', JSON.stringify(response));
       
       // Redirect based on role
       if (response.role === 'ARTIST') {

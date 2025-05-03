@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Container, Typography, Grid, Paper, Button, TextField, Select, MenuItem, FormControl, InputLabel, Alert, IconButton } from '@mui/material';
-import { artworkService } from '../services/api';
+import { artworkService, getArtistArtworks } from '../services/api';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
 
@@ -41,7 +41,7 @@ const ArtworkManagement = () => {
   const fetchArtworks = async () => {
     try {
       setError('');
-      const response = await artworkService.getArtworksByUser(currentUserId);
+      const response = await getArtistArtworks(currentUserId);
       setArtworks(response);
     } catch (error) {
       console.error('Error fetching artworks:', error);

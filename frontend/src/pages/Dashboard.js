@@ -38,6 +38,7 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
+    if (!user) return; // Prevent running if user is null
     const fetchData = async () => {
       try {
         const artworksData = await artworkService.getArtworksByUser(user.id);
@@ -52,12 +53,14 @@ const Dashboard = () => {
       }
     };
     fetchData();
-  }, [user.id]);
+  }, [user]);
+
+  if (!user) return <div>Loading user...</div>;
 
   return (
     <Container maxWidth="lg" className="py-8">
       <Typography variant="h4" gutterBottom className="text-brown">
-        Welcome, {user?.name || 'Artist'}!
+        Welcome, {user?.name || user?.firstName || 'Artist'}!
       </Typography>
       <Grid container spacing={3} className="mt-4">
         <Grid item xs={12} sm={6} md={3}>

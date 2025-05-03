@@ -21,6 +21,8 @@ const Login = () => {
 
     try {
       const response = await authService.login(formData.email, formData.password);
+      // Store user in localStorage for persistence
+      localStorage.setItem('user', JSON.stringify(response));
       // Check for redirect path
       const redirectPath = localStorage.getItem('redirectAfterLogin');
       if (redirectPath) {

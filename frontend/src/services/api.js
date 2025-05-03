@@ -275,10 +275,14 @@ export default api;
 
 export const getArtistArtworks = async (artistId) => {
     try {
-        const response = await api.get(`/artworks/artist/${artistId}`);
-        return response.data;
+        const response = await fetch(`${API_URL}/artworks/user/${artistId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch artist artworks');
+        }
+        return await response.json();
     } catch (error) {
-        throw error.response?.data || error.message;
+        console.error('Error fetching artist artworks:', error);
+        throw error;
     }
 };
 
@@ -340,4 +344,14 @@ export const artworkService = {
     const response = await api.get(`/artworks/${id}`);
     return response.data;
   },
+};
+
+export const getAllArtists = async () => {
+  try {
+    const response = await api.get('/users');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching artists:', error);
+    throw error;
+  }
 };

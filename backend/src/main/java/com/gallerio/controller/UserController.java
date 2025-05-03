@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -38,5 +39,12 @@ public class UserController {
             @RequestBody PasswordChangeRequest request) {
         userService.changePassword(userDetails.getUsername(), request);
         return ResponseEntity.ok().body(Map.of("message", "Password changed successfully"));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserProfileResponse>> getAllArtists() {
+        // Only return users with role ARTIST
+        List<UserProfileResponse> artists = userService.getAllArtists();
+        return ResponseEntity.ok(artists);
     }
 } 

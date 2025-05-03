@@ -1,53 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getAllArtists } from '../../services/api';
+import defaultUserIcon from '../../assets/default-user-icon.svg';
 
 const CollectorArtists = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [artists, setArtists] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Dummy data for demonstration
-  const artists = [
-    {
-      id: 1,
-      name: 'Jean Paul Mugisha',
-      specialty: 'Traditional Painting',
-      bio: 'Specializing in traditional Rwandan art forms, bringing cultural heritage to life through vibrant colors.',
-      image: 'https://picsum.photos/200/200',
-      artworks: 24,
-      followers: 1200,
-    },
-    {
-      id: 2,
-      name: 'Marie Claire Uwase',
-      specialty: 'Digital Art',
-      bio: 'Contemporary digital artist blending modern techniques with traditional Rwandan motifs.',
-      image: 'https://picsum.photos/200/201',
-      artworks: 18,
-      followers: 890,
-    },
-    {
-      id: 3,
-      name: 'Emmanuel Kwizera',
-      specialty: 'Sculpture',
-      bio: 'Creating powerful sculptures that tell stories of Rwanda\'s past and present.',
-      image: 'https://picsum.photos/200/202',
-      artworks: 15,
-      followers: 750,
-    },
-    {
-      id: 4,
-      name: 'Alice Mukamana',
-      specialty: 'Mixed Media',
-      bio: 'Exploring the intersection of traditional and contemporary art through mixed media.',
-      image: 'https://picsum.photos/200/203',
-      artworks: 30,
-      followers: 1500,
-    },
-  ];
+  useEffect(() => {
+    const fetchArtists = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getAllArtists();
+        if (Array.isArray(data)) {
+          setArtists(data);
+        } else {
+          setError('Invalid data received from server');
+        }
+      } catch (err) {
+        console.error('Error fetching artists:', err);
+        setError(err.response?.data?.message || 'Failed to load artists. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchArtists();
+  }, []);
 
   const filteredArtists = artists.filter(artist =>
-    artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    artist.specialty.toLowerCase().includes(searchTerm.toLowerCase())
+    (`${artist.firstName} ${artist.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (artist.bio || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (artist.location || '').toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-brown">Loading...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-600">{error}</div>;
 
   return (
     <div className="min-h-screen bg-cream">
@@ -58,7 +48,7 @@ const CollectorArtists = () => {
             Meet Our Artists
           </h1>
           <p className="text-cream/90 text-center max-w-2xl mx-auto">
-            Discover talented Rwandan artists who bring our cultural heritage to life through their unique artistic expressions.
+            Discover talented artists who bring our cultural heritage to life through their unique artistic expressions.
           </p>
         </div>
       </div>
@@ -70,7 +60,7 @@ const CollectorArtists = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search artists by name or specialty..."
+                placeholder="Search artists by name, bio, or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-6 py-3 rounded-full bg-cream focus:outline-none focus:ring-2 focus:ring-coral/50 pl-12"
@@ -102,26 +92,28 @@ const CollectorArtists = () => {
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
             >
               <div className="relative h-64">
-                <img
-                  src={artist.image}
-                  alt={artist.name}
-                  className="w-full h-full object-cover"
-                />
+                {artist.profilePhoto ? (
+                  <img
+                    src={artist.profilePhoto}
+                    alt={`${artist.firstName} ${artist.lastName}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-brown/5 flex items-center justify-center">
+                    <img
+                      src={defaultUserIcon}
+                      alt="Default user"
+                      className="w-24 h-24 opacity-50"
+                    />
+                  </div>
+                )}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brown/90 to-transparent p-6">
-                  <h3 className="text-xl font-semibold text-cream">{artist.name}</h3>
-                  <p className="text-cream/80">{artist.specialty}</p>
+                  <h3 className="text-xl font-semibold text-cream">{artist.firstName} {artist.lastName}</h3>
+                  <p className="text-cream/80">{artist.location || 'Location not specified'}</p>
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-brown/70 mb-4">{artist.bio}</p>
-                <div className="flex justify-between items-center text-sm">
-                  <div className="text-brown">
-                    <span className="font-semibold">{artist.artworks}</span> artworks
-                  </div>
-                  <div className="text-brown">
-                    <span className="font-semibold">{artist.followers}</span> followers
-                  </div>
-                </div>
+                <p className="text-brown/70 mb-4">{artist.bio || 'No bio available'}</p>
                 <Link
                   to={`/artist/${artist.id}`}
                   className="mt-4 block text-center bg-coral text-cream py-2 rounded-lg hover:bg-salmon transition-colors"

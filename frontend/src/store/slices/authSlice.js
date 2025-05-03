@@ -28,10 +28,13 @@ export const register = createAsyncThunk(
   }
 );
 
+const storedUser = localStorage.getItem('user');
+const storedToken = storedUser ? JSON.parse(storedUser).token : null;
+
 const initialState = {
-  user: null,
-  token: null,
-  isAuthenticated: false,
+  user: storedUser ? JSON.parse(storedUser) : null,
+  token: storedToken,
+  isAuthenticated: !!storedUser,
   loading: false,
   error: null,
 };

@@ -15,6 +15,7 @@ import About from './pages/About';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ArtworkDetails from './pages/ArtworkDetails';
+import ArtistProfile from './pages/ArtistProfile';
 
 // Protected Pages
 import Dashboard from './pages/Dashboard';
@@ -56,6 +57,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/artists" element={<Artists />} />
+          <Route path="/artist/:id" element={<ArtistProfile />} />
           <Route path="/about" element={<About />} />
           <Route path="/artwork/:id" element={<ArtworkDetails />} />
           <Route path="/login" element={<Login />} />

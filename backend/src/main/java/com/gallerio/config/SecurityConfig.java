@@ -37,10 +37,11 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/uploads/**").permitAll() // <-- add this line
+                        .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/artworks/**").permitAll()
+                        .requestMatchers("/api/users").permitAll()
                         .anyRequest().authenticated()
                 )
             .sessionManagement(session -> session

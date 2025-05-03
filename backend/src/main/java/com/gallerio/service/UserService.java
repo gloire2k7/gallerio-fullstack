@@ -5,13 +5,16 @@ import com.gallerio.dto.UserProfileResponse;
 import com.gallerio.dto.UserProfileUpdateRequest;
 import com.gallerio.dto.PasswordChangeRequest;
 import com.gallerio.model.User;
+import com.gallerio.model.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,5 +78,21 @@ public class UserService {
         // Update password
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    public List<UserProfileResponse> getAllArtists() {
+        return userRepository.findAll().stream()
+            .filter(user -> user.getRole() == Role.ARTIST)
+            .map(user -> UserProfileResponse.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .location(user.getLocation())
+                .bio(user.getBio())
+                .profilePhoto(user.getProfilePhoto())
+                .build())
+            .collect(Collectors.toList());
     }
 } 
