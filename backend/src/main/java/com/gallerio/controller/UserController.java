@@ -47,4 +47,9 @@ public class UserController {
         List<UserProfileResponse> artists = userService.getAllArtists();
         return ResponseEntity.ok(artists);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserProfileResponse>> searchUsers(@RequestParam("q") String query) {
+        return ResponseEntity.ok(userService.searchUsers(query));
+    }
 } 

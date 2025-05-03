@@ -121,6 +121,12 @@ const Artists = () => {
                 >
                   View Profile
                 </Link>
+                <Link
+                  to={`/messages?to=${artist.id}`}
+                  className="mt-2 block text-center bg-brown text-cream py-2 rounded-lg hover:bg-brown/80 transition-colors"
+                >
+                  Reach Out
+                </Link>
               </div>
             </div>
           ))}

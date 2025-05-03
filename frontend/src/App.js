@@ -68,7 +68,6 @@ function App() {
           <Route path="/artist/gallery" element={<ArtistGallery />} />
           <Route path="/artist/artworks" element={<ArtworkManagement />} />
           <Route path="/artist/inbox" element={<Messages />} />
-          <Route path="/artist/messages" element={<Messages />} />
           <Route path="/artist/orders" element={<Orders />} />
           <Route path="/artist/profile" element={<Profile />} />
 

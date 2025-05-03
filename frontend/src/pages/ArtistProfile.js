@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getAllArtists, getArtistArtworks } from '../services/api';
 import defaultUserIcon from '../assets/default-user-icon.svg';
+import { useSelector } from 'react-redux';
 
 const ArtistProfile = () => {
   const { id } = useParams();
@@ -9,6 +10,7 @@ const ArtistProfile = () => {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const fetchArtistData = async () => {
@@ -76,6 +78,13 @@ const ArtistProfile = () => {
                   {artist.firstName} {artist.lastName}
                 </h1>
                 <p className="text-brown/70 mb-4">{artist.location || 'Location not specified'}</p>
+                <Link
+                  to={`/${user?.role === 'ARTIST' ? 'artist/messages' : 'collector/inbox'}?to=${artist.id}`}
+                  className="mb-4 block text-center bg-brown text-cream py-2 px-4 rounded-lg hover:bg-brown/80 transition-colors font-semibold shadow-sm"
+                  style={{ marginBottom: '16px', padding: '12px 0' }}
+                >
+                  Message Artist
+                </Link>
               </div>
 
               <div className="space-y-4">

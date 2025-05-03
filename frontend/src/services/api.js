@@ -174,7 +174,21 @@ export const artistService = {
         } catch (error) {
             throw error.response?.data || error.message;
         }
-    }
+    },
+
+    sendMessage: async (recipientId, content) => {
+        try {
+            const response = await api.post('/messages/send', { recipientId, content });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    getConversation: async (userId) => {
+        const response = await api.get(`/messages/conversation/${userId}`);
+        return response.data;
+    },
 };
 
 export const collectorService = {
@@ -191,12 +205,8 @@ export const collectorService = {
         return api.post(`/orders`, { artworkId }).then(response => response.data);
     },
     getMessages: async () => {
-        try {
-            const response = await api.get('/messages/collector');
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error.message;
-        }
+        const response = await api.get('/messages');
+        return response.data;
     },
     replyToMessage: async (messageId, content) => {
         try {
@@ -216,7 +226,19 @@ export const collectorService = {
     },
     getOrders: () => {
         return api.get('/orders/collector').then(response => response.data);
-    }
+    },
+    sendMessage: async (recipientId, content) => {
+        try {
+            const response = await api.post('/messages/send', { recipientId, content });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+    getConversation: async (userId) => {
+        const response = await api.get(`/messages/conversation/${userId}`);
+        return response.data;
+    },
 };
 
 export const userService = {
@@ -268,7 +290,16 @@ export const userService = {
             console.error('Change password error:', error.response?.data || error.message);
             throw error;
         }
-    }
+    },
+
+    searchUsers: async (query) => {
+        try {
+            const response = await api.get(`/users/search?q=${encodeURIComponent(query)}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
 };
 
 export default api;

@@ -8,8 +8,8 @@ const ArtistGallery = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchArtworks = async () => {
-      try {
+  const fetchArtworks = async () => {
+    try {
         const data = await artworkService.getAllArtworks();
         setArtworks(data);
       } catch (error) {
@@ -79,11 +79,11 @@ const ArtistGallery = () => {
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
               <div className="relative group">
-                <img
+                  <img
                   src={artwork.imageUrl ? (artwork.imageUrl.startsWith('http') ? artwork.imageUrl : `http://localhost:8080${artwork.imageUrl}`) : ''}
-                  alt={artwork.title}
-                  className="w-full h-64 object-cover"
-                />
+                    alt={artwork.title}
+                    className="w-full h-64 object-cover"
+                  />
                 <div className="absolute inset-0 bg-brown/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <Link
                     to={`/artwork/${artwork.id}`}
@@ -99,7 +99,7 @@ const ArtistGallery = () => {
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-brown mb-2">
-                  {artwork.title}
+                    {artwork.title}
                   <span className={
                     artwork.status === 'AVAILABLE'
                       ? 'ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded'

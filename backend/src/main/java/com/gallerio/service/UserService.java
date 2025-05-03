@@ -95,4 +95,20 @@ public class UserService {
                 .build())
             .collect(Collectors.toList());
     }
+
+    public List<UserProfileResponse> searchUsers(String query) {
+        return userRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(query, query)
+            .stream()
+            .map(user -> UserProfileResponse.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .location(user.getLocation())
+                .bio(user.getBio())
+                .profilePhoto(user.getProfilePhoto())
+                .build())
+            .collect(Collectors.toList());
+    }
 } 
