@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { artworkService } from '../services/api';
 
 const ArtworkDetails = () => {
@@ -69,7 +69,14 @@ const ArtworkDetails = () => {
             <div className="space-y-6">
               <div>
                 <h2 className="text-lg font-semibold text-brown mb-2">Artist</h2>
-                <p className="text-brown/80">{artwork.artistName}</p>
+                <p className="text-brown/80">
+                  <Link
+                    to={`/artist/${artwork.userId}`}
+                    className="text-coral hover:underline"
+                  >
+                    {artwork.artistName}
+                  </Link>
+                </p>
               </div>
 
               <div>
