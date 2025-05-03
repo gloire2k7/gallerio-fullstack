@@ -20,13 +20,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Dispatch the thunk with credentials
-      const resultAction = await dispatch(login(formData));
-      if (login.fulfilled.match(resultAction)) {
-        const response = resultAction.payload;
-        // Store user and token in localStorage for later use
-        localStorage.setItem('user', JSON.stringify(response));
-        localStorage.setItem('token', response.token);
+      const response = await authService.login(formData.email, formData.password);
+      // Check for redirect path
+      const redirectPath = localStorage.getItem('redirectAfterLogin');
+      if (redirectPath) {
+        localStorage.removeItem('redirectAfterLogin');
+        navigate(redirectPath);
+      } else {
         // Redirect based on role
         if (response.role === 'ARTIST') {
           navigate('/artist/dashboard');
@@ -35,11 +35,9 @@ const Login = () => {
         } else {
           navigate('/');
         }
-      } else {
-        setError(resultAction.payload?.message || 'Login failed. Please try again.');
       }
-    } catch (err) {
-      setError('Login failed. Please try again.');
+    } catch (error) {
+      setError(error.message || 'Login failed');
     } finally {
       setLoading(false);
     }

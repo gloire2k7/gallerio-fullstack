@@ -1,8 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { useSelector } from 'react-redux';
 
 // Layout Components
 import NavbarSelector from './components/layout/NavbarSelector';
@@ -15,7 +14,7 @@ import Artists from './pages/Artists';
 import About from './pages/About';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
-import ArtworkDetail from './pages/ArtworkDetail';
+import ArtworkDetails from './pages/ArtworkDetails';
 
 // Protected Pages
 import Dashboard from './pages/Dashboard';
@@ -46,11 +45,6 @@ const theme = createTheme({
   },
 });
 
-const PrivateRoute = ({ children }) => {
-  const { isAuthenticated } = useSelector((state) => state.auth);
-  return isAuthenticated ? children : <Navigate to="/login" />;
-};
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -63,109 +57,25 @@ function App() {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/artists" element={<Artists />} />
           <Route path="/about" element={<About />} />
-          <Route path="/artwork/:id" element={<ArtworkDetail />} />
+          <Route path="/artwork/:id" element={<ArtworkDetails />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
           {/* Artist Routes */}
-          <Route
-            path="/artist/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/artist/gallery"
-            element={
-              <PrivateRoute>
-                <ArtistGallery />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/artist/artworks"
-            element={
-              <PrivateRoute>
-                <ArtworkManagement />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/artist/inbox"
-            element={
-              <PrivateRoute>
-                <Messages />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/artist/messages"
-            element={
-              <PrivateRoute>
-                <Messages />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/artist/orders"
-            element={
-              <PrivateRoute>
-                <Orders />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/artist/profile"
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/artist/dashboard" element={<Dashboard />} />
+          <Route path="/artist/gallery" element={<ArtistGallery />} />
+          <Route path="/artist/artworks" element={<ArtworkManagement />} />
+          <Route path="/artist/inbox" element={<Messages />} />
+          <Route path="/artist/messages" element={<Messages />} />
+          <Route path="/artist/orders" element={<Orders />} />
+          <Route path="/artist/profile" element={<Profile />} />
 
           {/* Collector Routes */}
-          <Route
-            path="/collector/home"
-            element={
-              <PrivateRoute>
-                <CollectorHome />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/collector/gallery"
-            element={
-              <PrivateRoute>
-                <CollectorGallery />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/collector/artists"
-            element={
-              <PrivateRoute>
-                <CollectorArtists />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/collector/inbox"
-            element={
-              <PrivateRoute>
-                <CollectorMessages />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/collector/profile"
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/collector/home" element={<CollectorHome />} />
+          <Route path="/collector/gallery" element={<CollectorGallery />} />
+          <Route path="/collector/artists" element={<CollectorArtists />} />
+          <Route path="/collector/inbox" element={<CollectorMessages />} />
+          <Route path="/collector/profile" element={<Profile />} />
         </Routes>
         <Footer />
       </Router>

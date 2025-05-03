@@ -1,20 +1,44 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { artworkService, authService } from '../services/api';
 
 const Gallery = () => {
+  const [artworks, setArtworks] = useState([]);
   const [filter, setFilter] = useState('all');
+  const navigate = useNavigate();
   
-  // Dummy data for demonstration
-  const artworks = [
-    { id: 1, title: 'Traditional Dance', artist: 'Jean Paul', category: 'painting', price: '$450', image: 'https://picsum.photos/400/300' },
-    { id: 2, title: 'Modern Rwanda', artist: 'Marie Claire', category: 'digital', price: '$350', image: 'https://picsum.photos/400/301' },
-    { id: 3, title: 'Village Life', artist: 'Emmanuel', category: 'sculpture', price: '$550', image: 'https://picsum.photos/400/302' },
-    { id: 4, title: 'Urban Dreams', artist: 'Alice', category: 'painting', price: '$400', image: 'https://picsum.photos/400/303' },
-    { id: 5, title: 'Nature\'s Call', artist: 'Patrick', category: 'photography', price: '$300', image: 'https://picsum.photos/400/304' },
-    { id: 6, title: 'Cultural Heritage', artist: 'Sarah', category: 'sculpture', price: '$600', image: 'https://picsum.photos/400/305' },
-  ];
+  useEffect(() => {
+    const fetchArtworks = async () => {
+      try {
+        const data = await artworkService.getAllArtworks();
+        setArtworks(data);
+      } catch (error) {
+        console.error('Error fetching artworks:', error);
+      }
+    };
+    fetchArtworks();
+  }, []);
 
-  const filteredArtworks = filter === 'all' ? artworks : artworks.filter(art => art.category === filter);
+  // Define main categories and group the rest as 'Other'
+  const mainCategories = ['Paintings', 'Sculptures', 'Photography', 'Digital Art'];
+  const allCategories = Array.from(new Set(artworks.map(a => a.category?.trim()))).filter(Boolean);
+  const otherCategories = allCategories.filter(cat => !mainCategories.includes(cat));
+  const filterButtons = ['all', ...mainCategories, ...(otherCategories.length ? ['Other'] : [])];
+
+  const filteredArtworks = filter === 'all'
+    ? artworks
+    : filter === 'Other'
+      ? artworks.filter(art => art.category && !mainCategories.includes(art.category.trim()))
+      : artworks.filter(art => art.category && art.category.trim() === filter);
+
+  const handleViewDetails = (artworkId) => {
+    if (!authService.isAuthenticated()) {
+      localStorage.setItem('redirectAfterLogin', `/artwork/${artworkId}`);
+      navigate('/login');
+    } else {
+      navigate(`/artwork/${artworkId}`);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cream">
@@ -34,7 +58,7 @@ const Gallery = () => {
       <div className="bg-white shadow-md">
         <div className="section-container py-6">
           <div className="flex flex-wrap gap-4 justify-center">
-            {['all', 'painting', 'sculpture', 'digital', 'photography'].map((category) => (
+            {filterButtons.map((category) => (
               <button
                 key={category}
                 onClick={() => setFilter(category)}
@@ -61,13 +85,17 @@ const Gallery = () => {
             >
               <div className="relative group">
                 <img
-                  src={artwork.image}
+                  src={artwork.imageUrl ? (artwork.imageUrl.startsWith('http') ? artwork.imageUrl : `http://localhost:8080${artwork.imageUrl}`) : ''}
                   alt={artwork.title}
                   className="w-full h-64 object-cover"
                 />
                 <div className="absolute inset-0 bg-brown/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <Link
                     to={`/artwork/${artwork.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleViewDetails(artwork.id);
+                    }}
                     className="bg-coral text-cream px-6 py-3 rounded-lg transform -translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
                   >
                     View Details
@@ -75,8 +103,17 @@ const Gallery = () => {
                 </div>
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-brown mb-2">{artwork.title}</h3>
-                <p className="text-brown/70 mb-4">By {artwork.artist}</p>
+                <h3 className="text-xl font-semibold text-brown mb-2">
+                  {artwork.title}
+                  <span className={
+                    artwork.status === 'AVAILABLE'
+                      ? 'ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded'
+                      : 'ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded'
+                  }>
+                    {artwork.status.toLowerCase()}
+                  </span>
+                </h3>
+                <p className="text-brown/70 mb-4">By {artwork.artistName}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-coral font-semibold">{artwork.price}</span>
                   <span className="text-brown/60 capitalize">{artwork.category}</span>

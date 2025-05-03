@@ -82,7 +82,7 @@ const CollectorHome = () => {
         </div>
         <div className="relative z-10 text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold text-cream mb-6">
-            Welcome Back, {user.firstName} !
+            Welcome Back, {user && user.firstName ? user.firstName : 'Collector'} !
           </h1>
           <p className="text-xl md:text-2xl text-cream/90 mb-8 max-w-2xl mx-auto">
             Connect with talented artists and explore unique artworks from Rwanda's vibrant art scene.

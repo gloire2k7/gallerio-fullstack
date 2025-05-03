@@ -15,6 +15,7 @@ public class ArtworkDTO {
     private String imageUrl;
     private String status;
     private Long userId;
+    private String artistName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     @JsonIgnore

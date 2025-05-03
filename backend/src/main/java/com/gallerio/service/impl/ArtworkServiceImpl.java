@@ -89,6 +89,7 @@ public class ArtworkServiceImpl implements ArtworkService {
         ArtworkDTO artworkDTO = new ArtworkDTO();
         BeanUtils.copyProperties(artwork, artworkDTO);
         artworkDTO.setUserId(artwork.getUser().getId());
+        artworkDTO.setArtistName(artwork.getUser().getFirstName() + " " + artwork.getUser().getLastName());
         return artworkDTO;
     }
 
@@ -99,6 +100,7 @@ public class ArtworkServiceImpl implements ArtworkService {
                 ArtworkDTO dto = new ArtworkDTO();
                 BeanUtils.copyProperties(artwork, dto);
                 dto.setUserId(artwork.getUser().getId());
+                dto.setArtistName(artwork.getUser().getFirstName() + " " + artwork.getUser().getLastName());
                 return dto;
             })
             .collect(Collectors.toList());
@@ -111,6 +113,7 @@ public class ArtworkServiceImpl implements ArtworkService {
                 ArtworkDTO dto = new ArtworkDTO();
                 BeanUtils.copyProperties(artwork, dto);
                 dto.setUserId(artwork.getUser().getId());
+                dto.setArtistName(artwork.getUser().getFirstName() + " " + artwork.getUser().getLastName());
                 return dto;
             })
             .collect(Collectors.toList());

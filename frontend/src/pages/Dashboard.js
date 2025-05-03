@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Container, Grid, Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { artistService } from '../services/api';
+import { artistService, artworkService } from '../services/api';
 
 const DashboardCard = ({ title, value, onClick, isClickable = true }) => (
   <Paper 
@@ -38,17 +38,21 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    const fetchDashboardStats = async () => {
+    const fetchData = async () => {
       try {
-        const dashboardData = await artistService.getDashboardStats();
-        setStats(dashboardData);
+        const artworksData = await artworkService.getArtworksByUser(user.id);
+        const messagesData = await artistService.getMessages();
+        setStats((prev) => ({
+          ...prev,
+          totalArtworks: artworksData.length,
+          unreadMessages: messagesData.filter(m => !m.read).length,
+        }));
       } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
+        console.error('Error fetching dashboard data:', error);
       }
     };
-
-    fetchDashboardStats();
-  }, []);
+    fetchData();
+  }, [user.id]);
 
   return (
     <Container maxWidth="lg" className="py-8">

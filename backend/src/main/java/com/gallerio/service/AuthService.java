@@ -38,9 +38,9 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole() != null ? Role.valueOf(request.getRole().toUpperCase()) : Role.COLLECTOR);
-        user.setLocation(request.getLocation());
-        user.setBio(request.getBio());
-        user.setProfilePhoto(request.getProfilePhoto());
+            user.setLocation(request.getLocation());
+            user.setBio(request.getBio());
+            user.setProfilePhoto(request.getProfilePhoto());
 
         userRepository.save(user);
 

@@ -254,13 +254,14 @@ const ArtworkManagement = () => {
                         className="absolute top-2 right-2 text-coral hover:text-salmon"
                         onClick={() => handleDelete(artwork.id)}
                         size="small"
+                        sx={{ mr: 1 }}
                       >
                         <DeleteIcon />
                       </IconButton>
                       <img
-                        src={artwork.imageUrl}
+                        src={artwork.imageUrl ? (artwork.imageUrl.startsWith('http') ? artwork.imageUrl : `http://localhost:8080${artwork.imageUrl}`) : ''}
                         alt={artwork.title}
-                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                        style={{ width: '100%', height: '200px', objectFit: 'cover', marginTop: '16px' }}
                         className="rounded-lg"
                       />
                       <Typography variant="h6" sx={{ mt: 1 }} className="text-brown">

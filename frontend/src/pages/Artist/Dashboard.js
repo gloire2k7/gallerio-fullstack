@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getArtistArtworks, getArtistMessages } from '../../services/api';
+import { getArtistArtworks, getArtistMessages, artworkService } from '../../services/api';
 
 const ArtistDashboard = () => {
   const dispatch = useDispatch();
@@ -13,11 +13,11 @@ const ArtistDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [artworksData, messagesData] = await Promise.all([
-          getArtistArtworks(user.id),
-          getArtistMessages(user.id)
-        ]);
+        // Fetch artworks for the current artist
+        const artworksData = await artworkService.getArtworksByUser(user.id);
         setArtworks(artworksData);
+        // Fetch messages if needed (keep your existing logic)
+        const messagesData = await getArtistMessages(user.id);
         setMessages(messagesData);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);

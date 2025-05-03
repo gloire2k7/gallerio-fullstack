@@ -80,6 +80,10 @@ export const authService = {
     logout: () => {
         localStorage.removeItem('token');
         window.location.href = '/login';
+    },
+
+    isAuthenticated: () => {
+        return !!localStorage.getItem('token');
     }
 };
 
@@ -329,5 +333,11 @@ export const artworkService = {
   // Delete artwork
   deleteArtwork: async (id) => {
     await api.delete(`/artworks/${id}`);
-  }
+  },
+
+  // Get a single artwork by id
+  getArtwork: async (id) => {
+    const response = await api.get(`/artworks/${id}`);
+    return response.data;
+  },
 };
