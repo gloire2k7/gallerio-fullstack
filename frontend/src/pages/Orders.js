@@ -16,7 +16,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
-import { artistService } from '../services/api';
+import { orderService } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 const Orders = () => {
@@ -35,7 +35,7 @@ const Orders = () => {
     try {
       setLoading(true);
       setError('');
-      const response = await artistService.getOrders();
+      const response = await orderService.getArtistOrders();
       setOrders(response);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -62,7 +62,7 @@ const Orders = () => {
     if (!selectedOrder) return;
 
     try {
-      await artistService.updateOrderStatus(selectedOrder.id, newStatus);
+      await orderService.updateOrderStatus(selectedOrder.id, newStatus);
       fetchOrders();
     } catch (error) {
       console.error('Error updating order status:', error);
@@ -73,15 +73,9 @@ const Orders = () => {
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'pending':
-        return 'warning';
-      case 'processing':
-        return 'info';
-      case 'shipped':
+      case 'paid':
         return 'success';
-      case 'delivered':
-        return 'success';
-      case 'cancelled':
+      case 'pending_payment':
         return 'error';
       default:
         return 'default';
@@ -112,7 +106,7 @@ const Orders = () => {
                 <TableCell className="text-brown font-bold">Customer</TableCell>
                 <TableCell className="text-brown font-bold">Artwork</TableCell>
                 <TableCell className="text-brown font-bold">Price</TableCell>
-                <TableCell className="text-brown font-bold">Status</TableCell>
+                <TableCell className="text-brown font-bold">Payment Status</TableCell>
                 <TableCell className="text-brown font-bold">Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -123,13 +117,13 @@ const Orders = () => {
                   <TableCell className="text-brown">
                     {new Date(order.createdAt).toLocaleDateString()}
                   </TableCell>
-                  <TableCell className="text-brown">{order.customer.name}</TableCell>
+                  <TableCell className="text-brown">{order.customer.firstName} {order.customer.lastName}</TableCell>
                   <TableCell className="text-brown">{order.artwork.title}</TableCell>
                   <TableCell className="text-brown">${order.artwork.price}</TableCell>
                   <TableCell>
                     <Chip
-                      label={order.status}
-                      color={getStatusColor(order.status)}
+                      label={order.paymentStatus === 'PAID' ? 'Paid' : 'Not Yet Paid'}
+                      color={getStatusColor(order.paymentStatus)}
                       size="small"
                     />
                   </TableCell>

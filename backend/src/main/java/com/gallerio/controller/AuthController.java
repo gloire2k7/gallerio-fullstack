@@ -11,10 +11,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -28,21 +33,46 @@ public class AuthController {
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AuthResponse> register(@Valid @ModelAttribute RegisterRequest request) {
         log.info("Received registration request for email: {}", request.getEmail());
+        log.info("Registration request details - firstName: {}, lastName: {}, role: {}", 
+            request.getFirstName(), request.getLastName(), request.getRole());
+        log.info("Profile photo present: {}", request.getProfilePhoto() != null);
+        
         try {
             AuthResponse response = authService.register(request);
             log.info("Registration successful for email: {}", request.getEmail());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("Registration failed for email: {}", request.getEmail(), e);
+            log.error("Registration failed for email: {} - Error: {}", request.getEmail(), e.getMessage(), e);
             return ResponseEntity.badRequest().body(
                     AuthResponse.builder()
                             .message("Registration failed: " + e.getMessage())
                             .build()
             );
         }
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<AuthResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        
+        String errorMessage = errors.entrySet().stream()
+            .map(entry -> entry.getKey() + ": " + entry.getValue())
+            .findFirst()
+            .orElse("Validation failed");
+
+        return ResponseEntity.badRequest().body(
+            AuthResponse.builder()
+                .message(errorMessage)
+                .build()
+        );
     }
 
     @PostMapping("/login")

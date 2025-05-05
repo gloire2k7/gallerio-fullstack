@@ -42,6 +42,7 @@ public class User implements UserDetails {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
+    @Column(columnDefinition = "TEXT")
     private String profilePhoto;
 
     @Builder.Default

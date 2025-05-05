@@ -5,6 +5,7 @@ import com.gallerio.dto.UserProfileUpdateRequest;
 import com.gallerio.dto.PasswordChangeRequest;
 import com.gallerio.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,10 +27,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserProfile(userDetails.getUsername()));
     }
 
-    @PutMapping("/profile")
+    @PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserProfileResponse> updateProfile(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody UserProfileUpdateRequest request) {
+            @ModelAttribute UserProfileUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUserProfile(userDetails.getUsername(), request));
     }
 

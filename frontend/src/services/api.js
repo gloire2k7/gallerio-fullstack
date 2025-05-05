@@ -375,6 +375,11 @@ export const artworkService = {
     const response = await api.get(`/artworks/${id}`);
     return response.data;
   },
+
+  createOrder: async (orderData) => {
+    const response = await api.post('/api/orders', orderData);
+    return response.data;
+  },
 };
 
 export const getAllArtists = async () => {
@@ -384,5 +389,27 @@ export const getAllArtists = async () => {
   } catch (error) {
     console.error('Error fetching artists:', error);
     throw error;
+  }
+};
+
+export const orderService = {
+  createOrder: async (orderData) => {
+    const response = await api.post('/orders', orderData);
+    return response.data;
+  },
+
+  getArtistOrders: async () => {
+    const response = await api.get('/orders/artist');
+    return response.data;
+  },
+
+  getCustomerOrders: async () => {
+    const response = await api.get('/orders/customer');
+    return response.data;
+  },
+
+  updateOrderStatus: async (orderId, status) => {
+    const response = await api.put(`/orders/${orderId}/status`, { status });
+    return response.data;
   }
 };

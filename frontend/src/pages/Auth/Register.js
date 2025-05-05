@@ -42,25 +42,45 @@ const Register = () => {
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await authService.register(formData);
-      dispatch(register(response));
-      // Store user in localStorage for persistence
-      localStorage.setItem('user', JSON.stringify(response));
+      // Create FormData object for file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append('firstName', formData.firstName);
+      formDataToSend.append('lastName', formData.lastName);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('password', formData.password);
+      formDataToSend.append('role', formData.role);
+      formDataToSend.append('location', formData.location || '');
+      formDataToSend.append('bio', formData.bio || '');
       
-      // Redirect based on role
-      if (response.role === 'ARTIST') {
-        navigate('/artist/dashboard');
-      } else if (response.role === 'COLLECTOR') {
-        navigate('/collector/home');
-      } else {
-        navigate('/');
+      if (formData.profilePhoto) {
+        formDataToSend.append('profilePhoto', formData.profilePhoto);
       }
+
+      const response = await authService.register(formDataToSend);
+      
+      if (response.message && response.message.includes('Password must be at least 6 characters long')) {
+        setError('Password must be at least 6 characters long');
+        setLoading(false);
+        return;
+      }
+      
+      // Show success message and redirect to login
+      setError(''); // Clear any existing errors
+      navigate('/login', { 
+        state: { 
+          message: 'Registration successful! Please login to continue.',
+          type: 'success'
+        }
+      });
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
+      setError(errorMessage);
+      console.error('Registration error:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }

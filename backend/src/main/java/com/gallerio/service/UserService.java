@@ -11,6 +11,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.util.Base64;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -56,8 +65,43 @@ public class UserService {
         if (request.getBio() != null) {
             user.setBio(request.getBio());
         }
-        if (request.getProfilePhoto() != null) {
-            user.setProfilePhoto(request.getProfilePhoto());
+        if (request.getProfilePhoto() != null && !request.getProfilePhoto().isEmpty()) {
+            try {
+                // Read the image
+                BufferedImage originalImage = ImageIO.read(request.getProfilePhoto().getInputStream());
+                
+                // Calculate new dimensions while maintaining aspect ratio
+                int maxDimension = 200; // Maximum width or height
+                int originalWidth = originalImage.getWidth();
+                int originalHeight = originalImage.getHeight();
+                int newWidth = originalWidth;
+                int newHeight = originalHeight;
+                
+                if (originalWidth > maxDimension || originalHeight > maxDimension) {
+                    if (originalWidth > originalHeight) {
+                        newWidth = maxDimension;
+                        newHeight = (int) ((double) originalHeight / originalWidth * maxDimension);
+                    } else {
+                        newHeight = maxDimension;
+                        newWidth = (int) ((double) originalWidth / originalHeight * maxDimension);
+                    }
+                }
+                
+                // Create resized image
+                BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+                resizedImage.createGraphics().drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+                
+                // Convert to JPEG with compression
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ImageIO.write(resizedImage, "jpg", outputStream);
+                
+                // Convert to base64
+                String base64Image = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+                user.setProfilePhoto(base64Image);
+            } catch (IOException e) {
+                log.error("Error processing profile photo: {}", e.getMessage());
+                throw new RuntimeException("Error processing profile photo");
+            }
         }
 
         userRepository.save(user);

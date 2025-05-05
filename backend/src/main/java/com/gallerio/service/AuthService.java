@@ -14,6 +14,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.util.Base64;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,25 +33,73 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        // Check if email is already registered
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return AuthResponse.builder()
-                    .message("Email is already registered")
+                    .message("Email already registered")
                     .build();
         }
 
-        User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole() != null ? Role.valueOf(request.getRole().toUpperCase()) : Role.COLLECTOR);
-            user.setLocation(request.getLocation());
-            user.setBio(request.getBio());
-            user.setProfilePhoto(request.getProfilePhoto());
+        // Create new user
+        User user = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(request.getRole() != null ? Role.valueOf(request.getRole().toUpperCase()) : Role.COLLECTOR)
+                .location(request.getLocation())
+                .bio(request.getBio())
+                .enabled(true)
+                .build();
 
-        userRepository.save(user);
+        // Handle profile photo upload
+        if (request.getProfilePhoto() != null && !request.getProfilePhoto().isEmpty()) {
+            try {
+                // Read the image
+                BufferedImage originalImage = ImageIO.read(request.getProfilePhoto().getInputStream());
+                
+                // Calculate new dimensions while maintaining aspect ratio
+                int maxDimension = 200; // Maximum width or height
+                int originalWidth = originalImage.getWidth();
+                int originalHeight = originalImage.getHeight();
+                int newWidth = originalWidth;
+                int newHeight = originalHeight;
+                
+                if (originalWidth > maxDimension || originalHeight > maxDimension) {
+                    if (originalWidth > originalHeight) {
+                        newWidth = maxDimension;
+                        newHeight = (int) ((double) originalHeight / originalWidth * maxDimension);
+                    } else {
+                        newHeight = maxDimension;
+                        newWidth = (int) ((double) originalWidth / originalHeight * maxDimension);
+                    }
+                }
+                
+                // Create resized image
+                BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+                resizedImage.createGraphics().drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+                
+                // Convert to JPEG with compression
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ImageIO.write(resizedImage, "jpg", outputStream);
+                
+                // Convert to base64
+                String base64Image = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+                user.setProfilePhoto(base64Image);
+            } catch (IOException e) {
+                log.error("Error processing profile photo: {}", e.getMessage());
+                return AuthResponse.builder()
+                        .message("Error processing profile photo")
+                        .build();
+            }
+        }
 
+        // Save user
+        user = userRepository.save(user);
+
+        // Generate JWT token
         String token = jwtTokenProvider.generateToken(user);
 
         return AuthResponse.builder()
@@ -52,7 +108,6 @@ public class AuthService {
                 .username(user.getEmail())
                 .email(user.getEmail())
                 .role(user.getRole().name())
-                .message("User registered successfully")
                 .build();
     }
 
