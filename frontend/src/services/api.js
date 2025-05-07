@@ -52,7 +52,7 @@ export const authService = {
             return response.data;
         } catch (error) {
             console.error('Login error:', error.response?.data || error.message);
-            throw error;
+            throw error.response?.data || error.message;
         }
     },
 
@@ -74,6 +74,27 @@ export const authService = {
         } catch (error) {
             console.error('Registration error:', error.response?.data || error.message);
             throw error.response?.data || error.message;
+        }
+    },
+
+    verifyToken: async (token) => {
+        try {
+            const response = await api.get('/auth/verify', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.data.message === 'Token is valid') {
+                return response.data;
+            }
+            throw new Error(response.data.message || 'Token verification failed');
+        } catch (error) {
+            console.error('Token verification error:', error.response?.data || error.message);
+            if (error.response?.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+            }
+            throw error;
         }
     },
 
@@ -300,6 +321,15 @@ export const userService = {
             throw error.response?.data || error.message;
         }
     },
+
+    getCurrentUser: () => {
+        return api.get('/users/me');
+    },
+
+    getUsersByRole: (role) => {
+        const normalizedRole = role.toUpperCase();
+        return api.get(`/users/role/${normalizedRole}`);
+    }
 };
 
 export default api;
@@ -410,6 +440,28 @@ export const orderService = {
 
   updateOrderStatus: async (orderId, status) => {
     const response = await api.put(`/orders/${orderId}/status`, { status });
+    return response.data;
+  }
+};
+
+export const adminService = {
+  getArtists: async () => {
+    const response = await api.get('/admin/users/artists');
+    return response.data;
+  },
+
+  getCollectors: async () => {
+    const response = await api.get('/admin/users/collectors');
+    return response.data;
+  },
+
+  getAllOrders: async () => {
+    const response = await api.get('/admin/orders');
+    return response.data;
+  },
+
+  updateOrderStatus: async (orderId, status) => {
+    const response = await api.put(`/admin/orders/${orderId}/status?status=${status}`);
     return response.data;
   }
 };

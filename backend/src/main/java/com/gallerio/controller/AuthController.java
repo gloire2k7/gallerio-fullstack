@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -88,6 +90,47 @@ public class AuthController {
                     AuthResponse.builder()
                             .message("Login failed: " + e.getMessage())
                             .build()
+            );
+        }
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<AuthResponse> verifyToken() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(401).body(
+                    AuthResponse.builder()
+                        .message("Invalid or expired token")
+                        .build()
+                );
+            }
+
+            String email = authentication.getName();
+            Optional<User> userOpt = userService.findByEmail(email);
+            
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                return ResponseEntity.ok(AuthResponse.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .username(user.getEmail())
+                    .role(user.getRole().name())
+                    .message("Token is valid")
+                    .build());
+            }
+            
+            return ResponseEntity.status(401).body(
+                AuthResponse.builder()
+                    .message("User not found")
+                    .build()
+            );
+        } catch (Exception e) {
+            log.error("Token verification failed: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(
+                AuthResponse.builder()
+                    .message("Token verification failed: " + e.getMessage())
+                    .build()
             );
         }
     }

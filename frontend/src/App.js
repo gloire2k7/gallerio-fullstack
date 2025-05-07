@@ -1,11 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-
-// Layout Components
-import NavbarSelector from './components/layout/NavbarSelector';
-import Footer from './components/layout/Footer';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import MainLayout from './layouts/MainLayout';
+import AdminLayout from './layouts/AdminLayout';
 
 // Public Pages
 import Home from './pages/Home';
@@ -24,11 +23,20 @@ import Messages from './pages/Messages';
 import ArtworkManagement from './pages/ArtworkManagement';
 import Orders from './pages/Orders';
 import ArtistGallery from './pages/ArtistGallery';
+
+// Collector Pages
 import CollectorHome from './pages/Collector/Home';
 import CollectorMessages from './pages/Collector/Messages';
 import CollectorGallery from './pages/Collector/Gallery';
 import CollectorArtists from './pages/Collector/Artists';
 
+// Admin Pages
+import AdminDashboard from './pages/Admin/Dashboard';
+import CollectorsList from './pages/Admin/CollectorsList';
+import OrdersList from './pages/Admin/OrdersList';
+import ArtistsList from './pages/Admin/ArtistsList';
+
+// Define your theme
 const theme = createTheme({
   palette: {
     primary: {
@@ -46,42 +54,70 @@ const theme = createTheme({
   },
 });
 
+// Protected Route component
+const ProtectedRoute = ({ children, requireAdmin = false }) => {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (requireAdmin && user.role !== 'ADMIN') {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <NavbarSelector />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/artists" element={<Artists />} />
-          <Route path="/artist/:id" element={<ArtistProfile />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/artwork/:id" element={<ArtworkDetails />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <AuthProvider>
+          <Routes>
+            {/* Admin Routes */}
+            <Route path="/admin/*" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="artists" element={<ArtistsList />} />
+              <Route path="collectors" element={<CollectorsList />} />
+              <Route path="orders" element={<OrdersList />} />
+            </Route>
 
-          {/* Artist Routes */}
-          <Route path="/artist/dashboard" element={<Dashboard />} />
-          <Route path="/artist/gallery" element={<ArtistGallery />} />
-          <Route path="/artist/artworks" element={<ArtworkManagement />} />
-          <Route path="/artist/inbox" element={<Messages />} />
-          <Route path="/artist/orders" element={<Orders />} />
-          <Route path="/artist/profile" element={<Profile />} />
+            {/* Main Routes */}
+            <Route path="/*" element={<MainLayout />}>
+              <Route index element={<Home />} />
+              <Route path="gallery" element={<Gallery />} />
+              <Route path="artists" element={<Artists />} />
+              <Route path="artist/:id" element={<ArtistProfile />} />
+              <Route path="about" element={<About />} />
+              <Route path="artwork/:id" element={<ArtworkDetails />} />
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<Register />} />
 
-          {/* Collector Routes */}
-          <Route path="/collector/home" element={<CollectorHome />} />
-          <Route path="/collector/gallery" element={<CollectorGallery />} />
-          <Route path="/collector/artists" element={<CollectorArtists />} />
-          <Route path="/collector/inbox" element={<CollectorMessages />} />
-          <Route path="/collector/profile" element={<Profile />} />
-        </Routes>
-        <Footer />
-      </Router>
+              {/* Artist Routes */}
+              <Route path="artist/dashboard" element={<Dashboard />} />
+              <Route path="artist/gallery" element={<ArtistGallery />} />
+              <Route path="artist/artworks" element={<ArtworkManagement />} />
+              <Route path="artist/inbox" element={<Messages />} />
+              <Route path="artist/orders" element={<Orders />} />
+              <Route path="artist/profile" element={<Profile />} />
+
+              {/* Collector Routes */}
+              <Route path="collector/home" element={<CollectorHome />} />
+              <Route path="collector/gallery" element={<CollectorGallery />} />
+              <Route path="collector/artists" element={<CollectorArtists />} />
+              <Route path="collector/inbox" element={<CollectorMessages />} />
+              <Route path="collector/profile" element={<Profile />} />
+            </Route>
+          </Routes>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
 
-export default App; 
+export default App;

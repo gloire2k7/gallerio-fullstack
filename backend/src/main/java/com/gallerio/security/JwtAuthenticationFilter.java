@@ -11,13 +11,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private JwtTokenProvider tokenProvider;
-    private UserDetailsService userDetailsService;
+    private final JwtTokenProvider tokenProvider;
+    private final UserDetailsService userDetailsService;
 
     public JwtAuthenticationFilter(JwtTokenProvider tokenProvider, UserDetailsService userDetailsService) {
         this.tokenProvider = tokenProvider;
@@ -30,18 +32,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                String username = tokenProvider.getUsernameFromJWT(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            if (StringUtils.hasText(jwt)) {
+                if (tokenProvider.validateToken(jwt)) {
+                    String username = tokenProvider.getUsernameFromJWT(jwt);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    log.debug("Set authentication for user: {}", username);
+                } else {
+                    log.warn("Invalid JWT token found in request");
+                }
             }
         } catch (Exception ex) {
-            logger.error("Could not set user authentication in security context", ex);
+            log.error("Could not set user authentication in security context", ex);
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);

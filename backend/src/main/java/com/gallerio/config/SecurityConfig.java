@@ -20,9 +20,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -36,20 +38,30 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/artworks/**").permitAll()
-                        .requestMatchers("/api/users").permitAll()
-                        .anyRequest().authenticated()
-                )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/api/artworks/**").permitAll()
+                .requestMatchers("/api/users").permitAll()
+                .anyRequest().authenticated()
+            )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService),
-                    UsernamePasswordAuthenticationFilter.class);
+                    UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    log.error("Unauthorized error: {}", authException.getMessage());
+                    response.sendError(401, "Error: Unauthorized");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    log.error("Access denied error: {}", accessDeniedException.getMessage());
+                    response.sendError(403, "Error: Access denied");
+                })
+            );
 
         return http.build();
     }
@@ -59,7 +71,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

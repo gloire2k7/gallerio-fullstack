@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { login } from '../../store/slices/authSlice';
-import { authService } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -20,25 +18,11 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await authService.login(formData.email, formData.password);
-      // Store user in localStorage for persistence
-      localStorage.setItem('user', JSON.stringify(response));
-      // Check for redirect path
-      const redirectPath = localStorage.getItem('redirectAfterLogin');
-      if (redirectPath) {
-        localStorage.removeItem('redirectAfterLogin');
-        navigate(redirectPath);
-      } else {
-        // Redirect based on role
-        if (response.role === 'ARTIST') {
-          navigate('/artist/dashboard');
-        } else if (response.role === 'COLLECTOR') {
-          navigate('/collector/home');
-        } else {
-          navigate('/');
-        }
-      }
+      console.log('Attempting login with:', formData.email);
+      await login(formData.email, formData.password);
+      console.log('Login successful');
     } catch (error) {
+      console.error('Login error:', error);
       setError(error.message || 'Login failed');
     } finally {
       setLoading(false);
