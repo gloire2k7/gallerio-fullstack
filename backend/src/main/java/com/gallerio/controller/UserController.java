@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
@@ -73,5 +76,11 @@ public class UserController {
     public ResponseEntity<User> getCurrentUser() {
         // Implementation will be added later
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/admin/cascade/{id}")
+    public ResponseEntity<?> deleteUserWithCascade(@PathVariable Long id) {
+        userService.deleteUserWithCascade(id);
+        return ResponseEntity.ok().body(java.util.Map.of("message", "User and related data deleted successfully"));
     }
 } 

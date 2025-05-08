@@ -37,6 +37,9 @@ import OrdersList from './pages/Admin/OrdersList';
 import ArtistsList from './pages/Admin/ArtistsList';
 import ArtworksList from './pages/Admin/ArtworksList';
 
+// Forgot Password Page
+import ForgotPassword from './pages/Auth/ForgotPassword';
+
 // Define your theme
 const theme = createTheme({
   palette: {
@@ -76,6 +79,8 @@ function App() {
       <CssBaseline />
       <AuthProvider>
           <Routes>
+            {/* Forgot Password Route (top-level, not inside MainLayout) */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             {/* Admin Routes */}
             <Route path="/admin/*" element={
               <ProtectedRoute requireAdmin={true}>

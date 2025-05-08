@@ -110,6 +110,11 @@ public class UserService {
     }
 
     @Transactional
+    public void deleteUserWithCascade(Long userId) {
+        userRepository.deleteUserAndRelated(userId);
+    }
+
+    @Transactional
     public void changePassword(String email, PasswordChangeRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));

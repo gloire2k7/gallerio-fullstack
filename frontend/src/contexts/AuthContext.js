@@ -57,6 +57,9 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await authService.login(email, password);
+      if (!response.token) {
+        throw new Error(response.message || 'Login failed');
+      }
       const userData = {
         id: response.id,
         email: response.email,
@@ -67,7 +70,6 @@ export const AuthProvider = ({ children }) => {
       setToken(response.token);
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(userData));
-      
       // Redirect based on role
       if (response.role === 'ADMIN') {
         navigate('/admin/dashboard');
@@ -77,7 +79,11 @@ export const AuthProvider = ({ children }) => {
         navigate('/collector/gallery');
       }
     } catch (error) {
-      throw error;
+      // Pass up backend error message if available
+      if (error?.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message || 'Login failed');
     }
   };
 

@@ -146,9 +146,21 @@ public class ArtworkServiceImpl implements ArtworkService {
 
     @Override
     public void deleteArtwork(Long id) {
-        if (!artworkRepository.existsById(id)) {
-            throw new RuntimeException("Artwork not found");
+        Artwork artwork = artworkRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Artwork not found"));
+
+        if (artwork.getImageUrl() != null && !artwork.getImageUrl().isEmpty()) {
+            // Remove leading slash if present
+            String relativePath = artwork.getImageUrl().startsWith("/") ? artwork.getImageUrl().substring(1) : artwork.getImageUrl();
+            Path imagePath = Paths.get(relativePath);
+            try {
+                Files.deleteIfExists(imagePath);
+            } catch (IOException e) {
+                // Log but do not prevent DB deletion
+                System.err.println("Failed to delete image file: " + imagePath + " - " + e.getMessage());
+            }
         }
+
         artworkRepository.deleteById(id);
     }
 } 
