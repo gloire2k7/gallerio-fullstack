@@ -145,4 +145,8 @@ public class AuthService {
                     .build();
         }
     }
+
+    public String encodePassword(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);
+    }
 }

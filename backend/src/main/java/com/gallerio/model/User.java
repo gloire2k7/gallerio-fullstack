@@ -48,6 +48,12 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean enabled = true;
 
+    @Column
+    private String resetCode;
+
+    @Column
+    private java.time.LocalDateTime resetCodeExpiry;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

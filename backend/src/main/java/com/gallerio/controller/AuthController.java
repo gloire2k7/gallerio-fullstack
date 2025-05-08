@@ -7,6 +7,7 @@ import com.gallerio.dto.RegisterRequest;
 import com.gallerio.model.User;
 import com.gallerio.security.JwtTokenProvider;
 import com.gallerio.service.AuthService;
+import com.gallerio.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +20,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Random;
 
 @Slf4j
 @RestController
@@ -31,6 +34,9 @@ import java.util.Map;
 public class AuthController {
     @Autowired
     private UserRepository userService;
+
+    @Autowired
+    private EmailService emailService;
 
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -133,5 +139,48 @@ public class AuthController {
                             .build()
             );
         }
+    }
+
+    // --- Forgot Password: Send Code ---
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        User user = userService.findByEmail(email).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "No user found with that email."));
+        }
+        // Generate 6-digit code
+        String code = String.format("%06d", new Random().nextInt(999999));
+        user.setResetCode(code);
+        user.setResetCodeExpiry(LocalDateTime.now().plusMinutes(15));
+        userService.save(user);
+        // Send email
+        String subject = "Your Password Reset Code";
+        String text = "Your password reset code is: " + code + "\nThis code will expire in 15 minutes.";
+        emailService.sendEmail(user.getEmail(), subject, text);
+        return ResponseEntity.ok(Map.of("message", "Reset code sent to your email."));
+    }
+
+    // --- Forgot Password: Reset Password ---
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        String code = payload.get("code");
+        String newPassword = payload.get("newPassword");
+        User user = userService.findByEmail(email).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "No user found with that email."));
+        }
+        if (user.getResetCode() == null || user.getResetCodeExpiry() == null
+            || !user.getResetCode().equals(code)
+            || user.getResetCodeExpiry().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired code."));
+        }
+        // Reset password
+        user.setPassword(authService.encodePassword(newPassword));
+        user.setResetCode(null);
+        user.setResetCodeExpiry(null);
+        userService.save(user);
+        return ResponseEntity.ok(Map.of("message", "Password reset successful. You can now log in."));
     }
 }
