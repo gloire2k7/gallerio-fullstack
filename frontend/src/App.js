@@ -35,6 +35,7 @@ import AdminDashboard from './pages/Admin/Dashboard';
 import CollectorsList from './pages/Admin/CollectorsList';
 import OrdersList from './pages/Admin/OrdersList';
 import ArtistsList from './pages/Admin/ArtistsList';
+import ArtworksList from './pages/Admin/ArtworksList';
 
 // Define your theme
 const theme = createTheme({
@@ -86,6 +87,7 @@ function App() {
               <Route path="artists" element={<ArtistsList />} />
               <Route path="collectors" element={<CollectorsList />} />
               <Route path="orders" element={<OrdersList />} />
+              <Route path="artworks" element={<ArtworksList />} />
             </Route>
 
             {/* Main Routes */}

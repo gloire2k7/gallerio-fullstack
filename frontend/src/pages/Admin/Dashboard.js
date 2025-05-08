@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { userService, artworkService, orderService } from '../../services/api';
+import { userService, artworkService, adminService } from '../../services/api';
+import { Bar, Pie } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+} from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -8,116 +21,119 @@ const Dashboard = () => {
     totalCollectors: 0,
     totalArtworks: 0,
     totalOrders: 0,
-    recentOrders: []
+    orderStatusCounts: { PAID: 0, PENDING: 0, CANCELLED: 0 }
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const [artists, collectors, artworks, orders] = await Promise.all([
-          userService.getUsersByRole('ARTIST'),
-          userService.getUsersByRole('COLLECTOR'),
+          adminService.getArtists(),
+          adminService.getCollectors(),
           artworkService.getAllArtworks(),
-          orderService.getAllOrders()
+          adminService.getAllOrders()
         ]);
+
+        // Count order statuses
+        const orderStatusCounts = orders.reduce((acc, order) => {
+          acc[order.status] = (acc[order.status] || 0) + 1;
+          return acc;
+        }, { PAID: 0, PENDING: 0, CANCELLED: 0 });
 
         setStats({
           totalArtists: artists.length,
           totalCollectors: collectors.length,
           totalArtworks: artworks.length,
           totalOrders: orders.length,
-          recentOrders: orders.slice(0, 5) // Get 5 most recent orders
+          orderStatusCounts
         });
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchStats();
   }, []);
 
+  // Remove fallback/mock data and pie chart
+  const isAllZero =
+    stats.totalArtists === 0 &&
+    stats.totalCollectors === 0 &&
+    stats.totalArtworks === 0 &&
+    stats.totalOrders === 0;
+
+  const barData = {
+    labels: ['Artists', 'Collectors', 'Artworks', 'Orders'],
+    datasets: [
+      {
+        label: 'Count',
+        data: [
+          stats.totalArtists,
+          stats.totalCollectors,
+          stats.totalArtworks,
+          stats.totalOrders
+        ],
+        backgroundColor: [
+          '#8B5C2A', // brown
+          '#E07A5F', // coral
+          '#F2CC8F', // cream
+          '#81B29A'  // greenish
+        ],
+        borderRadius: 8
+      }
+    ]
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-96 text-xl text-brown">Loading dashboard data...</div>;
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-brown">Admin Dashboard</h1>
-        <div className="flex space-x-4">
-          <Link
-            to="/admin/artists"
-            className="bg-brown text-cream px-4 py-2 rounded-lg hover:bg-brown/90 transition"
-          >
-            Manage Artists
-          </Link>
-          <Link
-            to="/admin/collectors"
-            className="bg-brown text-cream px-4 py-2 rounded-lg hover:bg-brown/90 transition"
-          >
-            Manage Collectors
-          </Link>
-        </div>
       </div>
-      
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10 cursor-pointer hover:shadow-lg transition" onClick={() => window.location.href='/admin/artists'}>
           <h3 className="text-lg font-semibold text-brown mb-2">Total Artists</h3>
           <p className="text-3xl font-bold text-coral">{stats.totalArtists}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10 cursor-pointer hover:shadow-lg transition" onClick={() => window.location.href='/admin/collectors'}>
           <h3 className="text-lg font-semibold text-brown mb-2">Total Collectors</h3>
           <p className="text-3xl font-bold text-coral">{stats.totalCollectors}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10 cursor-pointer hover:shadow-lg transition" onClick={() => window.location.href='/admin/artworks'}>
           <h3 className="text-lg font-semibold text-brown mb-2">Total Artworks</h3>
           <p className="text-3xl font-bold text-coral">{stats.totalArtworks}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10 cursor-pointer hover:shadow-lg transition" onClick={() => window.location.href='/admin/orders'}>
           <h3 className="text-lg font-semibold text-brown mb-2">Total Orders</h3>
           <p className="text-3xl font-bold text-coral">{stats.totalOrders}</p>
         </div>
       </div>
-
-      {/* Recent Orders */}
-      <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-brown">Recent Orders</h2>
-          <Link
-            to="/admin/orders"
-            className="text-coral hover:text-coral/80 transition"
-          >
-            View All Orders
-          </Link>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead>
-              <tr className="border-b border-brown/20">
-                <th className="text-left py-3 px-4 text-brown">Artwork</th>
-                <th className="text-left py-3 px-4 text-brown">Artist</th>
-                <th className="text-left py-3 px-4 text-brown">Customer</th>
-                <th className="text-left py-3 px-4 text-brown">Price</th>
-                <th className="text-left py-3 px-4 text-brown">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.recentOrders.map((order) => (
-                <tr key={order.id} className="border-b border-brown/10 hover:bg-brown/5">
-                  <td className="py-3 px-4">{order.artwork.title}</td>
-                  <td className="py-3 px-4">{order.artist.firstname} {order.artist.lastname}</td>
-                  <td className="py-3 px-4">{order.customer.firstname} {order.customer.lastname}</td>
-                  <td className="py-3 px-4">${order.artwork.price}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-sm ${
-                      order.status === 'PAID' ? 'bg-green-100 text-green-800' :
-                      order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {order.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-brown/10 flex flex-col items-center col-span-2 max-w-md mx-auto h-72">
+          <h2 className="text-lg font-bold text-brown mb-4">Platform Overview</h2>
+          {isAllZero ? (
+            <div className="text-brown/60 mt-8">No data to display.</div>
+          ) : (
+            <Bar data={barData} options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                title: { display: false }
+              },
+              scales: {
+                y: { beginAtZero: true, precision: 0 }
+              }
+            }} style={{height: '100%', width: '100%'}} />
+          )}
         </div>
       </div>
     </div>

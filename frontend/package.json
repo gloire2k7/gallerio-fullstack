@@ -9,13 +9,16 @@
     "@mui/material": "^5.13.0",
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
+    "chart.js": "^4.4.9",
     "formik": "^2.2.9",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.3.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.11.1",
     "react-scripts": "5.0.1",
+    "react-to-pdf": "^2.0.0",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
     "yup": "^1.1.1"
@@ -44,4 +47,4 @@
       "last 1 safari version"
     ]
   }
-} 
+}

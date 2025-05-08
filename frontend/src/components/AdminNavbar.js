@@ -27,6 +27,7 @@ const AdminNavbar = () => {
             <Link to="/admin/dashboard" className="text-cream hover:text-coral transition-colors">Dashboard</Link>
             <Link to="/admin/artists" className="text-cream hover:text-coral transition-colors">Artists</Link>
             <Link to="/admin/collectors" className="text-cream hover:text-coral transition-colors">Collectors</Link>
+            <Link to="/admin/artworks" className="text-cream hover:text-coral transition-colors">Artworks</Link>
             <Link to="/admin/orders" className="text-cream hover:text-coral transition-colors">Orders</Link>
             
             {/* Profile Dropdown */}
@@ -106,6 +107,13 @@ const AdminNavbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Collectors
+            </Link>
+            <Link
+              to="/admin/artworks"
+              className="block px-3 py-2 text-cream hover:text-coral transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Artworks
             </Link>
             <Link
               to="/admin/orders"

@@ -130,7 +130,7 @@ public class AuthController {
             return ResponseEntity.status(500).body(
                 AuthResponse.builder()
                     .message("Token verification failed: " + e.getMessage())
-                    .build()
+                            .build()
             );
         }
     }
