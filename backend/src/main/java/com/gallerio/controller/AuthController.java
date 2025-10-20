@@ -1,6 +1,6 @@
 package com.gallerio.controller;
 
-import com.gallerio.Repository.UserRepository;
+import com.gallerio.repository.UserRepository;
 import com.gallerio.dto.AuthResponse;
 import com.gallerio.dto.LoginRequest;
 import com.gallerio.dto.RegisterRequest;

@@ -1,4 +1,4 @@
-package com.gallerio.Repository;
+package com.gallerio.repository;
 
 import com.gallerio.model.Order;
 import com.gallerio.model.User;

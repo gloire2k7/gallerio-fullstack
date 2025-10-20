@@ -1,4 +1,4 @@
-package com.gallerio.Repository;
+package com.gallerio.repository;
 
 import com.gallerio.model.Artwork;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -4,7 +4,7 @@ import com.gallerio.dto.UserProfileResponse;
 import com.gallerio.dto.UserProfileUpdateRequest;
 import com.gallerio.dto.PasswordChangeRequest;
 import com.gallerio.service.UserService;
-import com.gallerio.Repository.UserRepository;
+import com.gallerio.repository.UserRepository;
 import com.gallerio.model.User;
 import com.gallerio.model.Role;
 import lombok.RequiredArgsConstructor;

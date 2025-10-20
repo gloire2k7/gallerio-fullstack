@@ -1,8 +1,8 @@
 package com.gallerio.service;
 
-import com.gallerio.Repository.OrderRepository;
-import com.gallerio.Repository.ArtworkRepository;
-import com.gallerio.Repository.UserRepository;
+import com.gallerio.repository.OrderRepository;
+import com.gallerio.repository.ArtworkRepository;
+import com.gallerio.repository.UserRepository;
 import com.gallerio.model.Order;
 import com.gallerio.model.Artwork;
 import com.gallerio.model.User;

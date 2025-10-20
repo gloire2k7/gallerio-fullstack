@@ -1,0 +1,50 @@
+services:
+  backend:
+    build: ./backend
+    container_name: gallerio-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=gallerio
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=Margot+250793833800
+      - JWT_SECRET=lSOLIfCW82fxj48H/VC1JbmOzfqAE3DVEnKRcyVD5iXC5e1/cJzk8POxpi/m/BwGaWWicuiErTFzammpk8OX6A==
+      - JWT_EXPIRATION=86400000
+    depends_on:
+      - db
+    networks:
+      - gallerio-network
+
+  frontend:
+    build: ./frontend
+    container_name: gallerio-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - gallerio-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: gallerio-postgres
+    environment:
+      POSTGRES_DB: gallerio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Margot+250793833800
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - gallerio-network
+
+volumes:
+  db_data:
+
+networks:
+  gallerio-network:
+    driver: bridge

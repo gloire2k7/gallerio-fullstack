@@ -1,4 +1,4 @@
-package com.gallerio.Repository;
+package com.gallerio.repository;
 
 import com.gallerio.model.Message;
 import com.gallerio.model.User;

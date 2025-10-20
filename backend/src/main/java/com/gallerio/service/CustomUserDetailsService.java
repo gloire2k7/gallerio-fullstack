@@ -1,6 +1,6 @@
 package com.gallerio.service;
 
-import com.gallerio.Repository.UserRepository;
+import com.gallerio.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

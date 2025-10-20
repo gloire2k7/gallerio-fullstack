@@ -1,7 +1,7 @@
 package com.gallerio.service.impl;
 
-import com.gallerio.Repository.MessageRepository;
-import com.gallerio.Repository.UserRepository;
+import com.gallerio.repository.MessageRepository;
+import com.gallerio.repository.UserRepository;
 import com.gallerio.model.Message;
 import com.gallerio.model.User;
 import com.gallerio.service.MessageService;

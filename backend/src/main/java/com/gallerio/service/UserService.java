@@ -1,6 +1,6 @@
 package com.gallerio.service;
 
-import com.gallerio.Repository.UserRepository;
+import com.gallerio.repository.UserRepository;
 import com.gallerio.dto.UserProfileResponse;
 import com.gallerio.dto.UserProfileUpdateRequest;
 import com.gallerio.dto.PasswordChangeRequest;
